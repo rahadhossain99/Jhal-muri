@@ -5,37 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>স্পেশাল ঝালমুড়ি মশলা - eFoodDokan</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font লোড করা হয়েছে -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
-        @keyframes fadeIn { from: { opacity: 0; } to: { opacity: 1; } }
-        @keyframes slideInUp { from: { opacity: 0; transform: translateY(50px); } to: { opacity: 1; transform: translateY(0); } }
+        /* কাস্টম ফন্ট এবং ব্যাকগ্রাউন্ড স্টাইল */
+        body {
+            font-family: 'Noto Sans Bengali', 'Inter', sans-serif;
+            background-color: #f8f8f8;
+            background-image: linear-gradient(to bottom, #ffffff, #f0fdf4);
+            color: #333;
+        }
+
+        /* কমন ট্রানজিশন এবং শ্যাডো */
+        .card-hover-effect {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover-effect:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        /* কাস্টম অ্যানিমেশন */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes popIn { 0% { transform: scale(0.6); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         @keyframes pulse-shadow {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.8); }
-            70% { box-shadow: 0 0 0 25px rgba(220, 38, 38, 0); }
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 25px rgba(239, 68, 68, 0); }
         }
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
         }
 
-        html { scroll-behavior: smooth; }
-        body {
-            font-family: 'Noto Sans Bengali', sans-serif;
-            background-color: #f0fdf4;
-            background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%2322c55e" fill-opacity="0.04"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
-        }
-
-        .animated-section { opacity: 0; animation: slideInUp 1s ease-out forwards; }
+        /* বোতামের স্টাইল */
         .btn-order {
             background-image: linear-gradient(to right, #f59e0b 0%, #ef4444 51%, #f59e0b 100%);
-            box-shadow: 0 5px 25px rgba(239, 68, 68, 0.4);
-            transition: all 0.4s ease-in-out;
             background-size: 200% auto;
+            box-shadow: 0 5px 25px rgba(239, 68, 68, 0.4);
             animation: pulse-shadow 2.5s infinite;
+            transition: all 0.4s ease-in-out;
         }
         .btn-order:hover {
             background-position: right center;
@@ -46,8 +57,8 @@
         .btn-submit {
             background-image: linear-gradient(to right, #16a34a 0%, #15803d 51%, #16a34a 100%);
             box-shadow: 0 5px 25px rgba(22, 163, 74, 0.4);
-            transition: all 0.4s ease-in-out;
             background-size: 200% auto;
+            transition: all 0.4s ease-in-out;
         }
         .btn-submit:hover:not(:disabled) {
             background-position: right center;
@@ -58,92 +69,44 @@
             background-image: none; background-color: #9ca3af;
             box-shadow: none; cursor: not-allowed; transform: none;
         }
+
+        /* ইনপুট ফিল্ড স্টাইল */
         .input-field {
-            background-color: #f0fdf4; border: 2px solid #a7f3d0; transition: all 0.3s ease;
+            background-color: #fff; border: 2px solid #e2e8f0; transition: all 0.3s ease;
         }
         .input-field:focus {
             border-color: #10b981; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
             background-color: #fff; transform: scale(1.02);
         }
-        .modal-content { animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
-        .testimonial-card {
-            background: #ffffff;
-            border-left: 5px solid #f59e0b;
-        }
-        
-        /* Print styles */
-        @media print {
-            body * { visibility: hidden; }
-            #printable-receipt, #printable-receipt * { visibility: visible; }
-            #printable-receipt {
-                position: absolute; left: 0; top: 0; width: 100%;
-                padding: 2rem; border: 2px solid #000;
-            }
-            .no-print { display: none; }
-        }
-        
-        /* New Styles for Login Button & User Profile */
-        .btn-google-login {
-            background-color: #4285F4;
-            color: #fff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-        }
-        .btn-google-login:hover {
-            box-shadow: 4px 8px rgba(0, 0, 0, 0.3);
-            transform: translateY(-2px);
-        }
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .user-profile:hover .user-name {
-            color: #ef4444;
-        }
+
+        /* ইউজার মেনু ড্রপডাউন */
         .user-menu {
             top: 100%;
             right: 0;
             transform-origin: top right;
             animation: popIn 0.3s ease-out forwards;
         }
-        .comment-card {
-            background-color: #fff;
-            border-radius: 1rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            padding: 1.5rem;
-        }
-        .admin-reply {
-            background-color: #f0fdf4;
-            border-left: 4px solid #10b981;
-            padding: 1rem;
-            margin-top: 1rem;
-            border-radius: 0 0.5rem 0.5rem 0;
-        }
     </style>
 </head>
 <body class="text-gray-800">
 
-    <!-- Header -->
+    <!-- Header Section -->
     <header class="bg-white/90 backdrop-blur-lg shadow-xl sticky top-0 z-50 rounded-b-3xl">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center py-4">
-            <div class="flex items-center space-x-3">
-                <a href="#" id="home-link" class="flex items-center space-x-3">
-                    <img src="https://i.postimg.cc/qRSXYFQJ/chalmuri-masla-800x800.webp" alt="লোগো" class="w-12 h-12 rounded-full border-2 border-amber-500 animate-[float_3s_ease-in-out_infinite]">
-                    <h1 class="text-3xl font-extrabold text-gray-800">eFoodDokan</h1>
-                </a>
-            </div>
+            <a href="#heroSection" class="flex items-center space-x-3 transition-transform duration-300 hover:scale-105">
+                <img src="https://i.postimg.cc/qRSXYFQJ/chalmuri-masla-800x800.webp" alt="লোগো" class="w-12 h-12 rounded-full border-2 border-amber-500 animate-[float_3s_ease-in-out_infinite]">
+                <h1 class="text-3xl font-extrabold text-gray-800 hidden md:block">eFoodDokan</h1>
+            </a>
             <div class="flex items-center space-x-4">
-                <a href="#orderHistorySection" id="history-link" class="text-gray-600 hover:text-amber-600 transition-colors" title="অর্ডার হিস্টোরি">
+                <a href="#orderHistorySection" class="text-gray-600 hover:text-amber-600 transition-colors" title="অর্ডার হিস্টোরি">
                     <i class="fas fa-history fa-lg"></i>
                 </a>
                 <a href="#whyUsSection" class="text-gray-600 hover:text-amber-600 transition-colors hidden md:inline" title="কেন সেরা?">
                     <i class="fas fa-award fa-lg"></i>
                 </a>
-                <div id="auth-ui" class="relative">
-                    <!-- Auth UI will be rendered here by JS -->
+                <!-- Auth UI -->
+                <div id="auth-ui" class="relative group">
+                    <!-- এখানে লগইন বা ইউজার প্রোফাইল থাকবে -->
                 </div>
             </div>
         </div>
@@ -152,7 +115,7 @@
     <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 mb-20 space-y-20">
 
         <!-- Hero Section -->
-        <section class="text-center animated-section">
+        <section id="heroSection" class="text-center animate-fadeIn animated-section">
             <h2 class="text-4xl md:text-6xl font-extrabold text-gray-900 leading-tight">
                 সেই চিরচেনা স্বাদ, এখন <span class="text-amber-600">আপনার রান্নাঘরে!</span>
             </h2>
@@ -166,52 +129,27 @@
                 </a>
                 <p class="mt-5 text-3xl font-bold">বিশেষ ছাড়ে মাত্র <span class="text-green-600">৳১,১৯০</span> <del class="text-gray-400 text-xl">৳১,৫০০</del></p>
             </div>
-            <img src="https://i.postimg.cc/rmKNfT1Z/Jhalmuri-Mosla.webp" alt="ঝালমুড়ি মশলার আকর্ষণীয় ছবি" class="mt-10 rounded-3xl shadow-2xl w-full max-w-4xl mx-auto transform hover:scale-105 transition-transform duration-500">
+            <img src="https://i.postimg.cc/rmKNfT1Z/Jhalmuri-Mosla.webp" alt="ঝালমুড়ি মশলার আকর্ষণীয় ছবি" class="mt-10 rounded-3xl shadow-2xl w-full max-w-4xl mx-auto card-hover-effect">
         </section>
         
         <!-- Why Us Section -->
-        <section id="whyUsSection" class="bg-white p-8 md:p-12 rounded-3xl shadow-2xl animated-section">
+        <section id="whyUsSection" class="bg-white p-8 md:p-12 rounded-3xl shadow-2xl animate-fadeIn animated-section">
             <h3 class="text-4xl font-extrabold text-center mb-12">কেন আমাদের মশলাই সেরা?</h3>
-            <div class="space-y-8">
-                <div class="flex flex-col md:flex-row items-start gap-6">
-                    <div class="bg-amber-100 text-amber-600 text-3xl rounded-full w-20 h-20 flex-shrink-0 flex items-center justify-center"><i class="fas fa-question"></i></div>
-                    <div>
-                        <h4 class="text-2xl font-bold">বাজারের সাধারণ মশলার সাথে এর পার্থক্য কী?</h4>
-                        <p class="mt-2 text-lg text-gray-700">আমরা কোনো বাণিজ্যিক বা রেডিমেড মশলা ব্যবহার করি না। প্রতিটি উপাদান, যেমন—জিরা, ধনিয়া, এলাচ, দারুচিনি ইত্যাদি বাছাই করে, পরিষ্কার করে, মেপে এবং নিজেদের তত্ত্বাবধানে গুঁড়ো করে সঠিক অনুপাতে মেশানো হয়। সাথে থাকে বাছাই করা গরুর মাংসের কিমা, যা এই মশলাকে দিয়েছে এক রাজকীয় স্বাদ।</p>
-                    </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div class="p-6 bg-green-50 rounded-2xl border-2 border-green-200 card-hover-effect">
+                    <div class="bg-green-200 text-green-700 text-4xl rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center"><i class="fas fa-drumstick-bite"></i></div>
+                    <h4 class="text-2xl font-bold mb-2">স্বাদে সেরা গরুর কিমা</h4>
+                    <p class="text-gray-600">আমরা বাছাই করা গরুর মাংসের কিমা ব্যবহার করি, যা মশলার স্বাদকে অনন্য করে তোলে।</p>
                 </div>
-                <div class="flex flex-col md:flex-row items-start gap-6">
-                    <div class="bg-green-100 text-green-600 text-3xl rounded-full w-20 h-20 flex-shrink-0 flex items-center justify-center"><i class="fas fa-seedling"></i></div>
-                    <div>
-                        <h4 class="text-2xl font-bold">এটি কি স্বাস্থ্যকর ও নিরাপদ?</h4>
-                        <p class="mt-2 text-lg text-gray-700">আপনার স্বাস্থ্যই আমাদের প্রথম অগ্রাধিকার। আমাদের মশলা সম্পূর্ণভাবে ক্ষতিকর কেমিক্যাল, টেস্টিং সল্ট, এবং প্রিজারভেটিভ মুক্ত। আমরা খাঁটি সরিষার তেল ব্যবহার করি এবং প্রতিটি ধাপেই পরিচ্ছন্নতা নিশ্চিত করি। তাই安心して পরিবারের সবাইকে নিয়ে উপভোগ করতে পারেন।</p>
-                    </div>
+                <div class="p-6 bg-yellow-50 rounded-2xl border-2 border-yellow-200 card-hover-effect">
+                    <div class="bg-yellow-200 text-yellow-700 text-4xl rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center"><i class="fas fa-pepper-hot"></i></div>
+                    <h4 class="text-2xl font-bold mb-2">খাঁটি সরিষার তেল</h4>
+                    <p class="text-gray-600">খাঁটি সরিষার তেল ব্যবহার করা হয়, যা স্বাস্থ্যকর এবং প্রকৃত স্বাদ ধরে রাখে।</p>
                 </div>
-                <div class="flex flex-col md:flex-row items-start gap-6">
-                    <div class="bg-red-100 text-red-600 text-3xl rounded-full w-20 h-20 flex-shrink-0 flex items-center justify-center"><i class="fas fa-star"></i></div>
-                    <div>
-                        <h4 class="text-2xl font-bold">আপনাদের কথা বিশ্বাস করব কেন?</h4>
-                        <p class="mt-2 text-lg text-gray-700">আমরা শুধু ব্যবসাই করি না, আমরা খাবারের প্রতি ভালোবাসা এবং ঐতিহ্যকে সম্মান করি। আমাদের লক্ষ্য শুধু একবার বিক্রি করা নয়, বরং আপনার আস্থার সম্পর্কে তৈরি করা। আমাদের শত শত সন্তুষ্ট গ্রাহকের রিভিউ এবং বারবার অর্ডার করাই আমাদের গুণগত মানের সবচেয়ে বড় প্রমাণ।</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- Ingredients Section -->
-        <section class="bg-white p-8 md:p-12 rounded-3xl shadow-xl animated-section">
-            <h3 class="text-4xl font-extrabold text-center mb-10">কি কি থাকছে আমাদের মশলায়?</h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                <div class="transform hover:-translate-y-2 transition-transform duration-300">
-                    <div class="bg-green-50 p-6 rounded-2xl"><i class="fas fa-drumstick-bite text-6xl text-red-500 mb-4"></i><h4 class="text-xl font-bold">গরুর কিমা</h4></div>
-                </div>
-                <div class="transform hover:-translate-y-2 transition-transform duration-300">
-                    <div class="bg-green-50 p-6 rounded-2xl"><i class="fas fa-pepper-hot text-6xl text-green-600 mb-4"></i><h4 class="text-xl font-bold">বাছাই মশলা</h4></div>
-                </div>
-                <div class="transform hover:-translate-y-2 transition-transform duration-300">
-                    <div class="bg-green-50 p-6 rounded-2xl"><i class="fas fa-seedling text-6xl text-yellow-500 mb-4"></i><h4 class="text-xl font-bold">খাঁটি তেল</h4></div>
-                </div>
-                <div class="transform hover:-translate-y-2 transition-transform duration-300">
-                    <div class="bg-green-50 p-6 rounded-2xl"><i class="fas fa-heart text-6xl text-pink-500 mb-4"></i><h4 class="text-xl font-bold">আমাদের ভালোবাসা</h4></div>
+                <div class="p-6 bg-red-50 rounded-2xl border-2 border-red-200 card-hover-effect">
+                    <div class="bg-red-200 text-red-700 text-4xl rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center"><i class="fas fa-heart"></i></div>
+                    <h4 class="text-2xl font-bold mb-2">কোনো কেমিক্যাল নেই</h4>
+                    <p class="text-gray-600">আমাদের মশলা সম্পূর্ণভাবে ক্ষতিকর কেমিক্যাল ও প্রিজারভেটিভ মুক্ত, তাই নিরাপদ।</p>
                 </div>
             </div>
         </section>
@@ -229,13 +167,13 @@
                 </form>
             </div>
             <div id="comments-container" class="space-y-6">
-                <!-- Comments will be loaded here -->
+                <!-- মন্তব্যগুলো এখানে লোড হবে -->
                 <p id="no-comments-message" class="text-center text-gray-500 text-lg">এখনো কোনো মন্তব্য নেই।</p>
             </div>
         </section>
 
         <!-- Order Form Section -->
-        <section id="orderFormSection" class="bg-white p-8 md:p-12 rounded-3xl shadow-2xl animated-section">
+        <section id="orderFormSection" class="bg-white p-8 md:p-12 rounded-3xl shadow-2xl animate-fadeIn animated-section">
             <div class="text-center mb-10">
                 <h3 class="text-4xl font-extrabold">অর্ডার করতে ফর্মটি পূরণ করুন</h3>
                 <p id="login-prompt" class="text-lg text-red-500 mt-2 font-semibold flex items-center justify-center">
@@ -244,6 +182,7 @@
             </div>
             <form id="orderForm" class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
                 <div class="space-y-6">
+                    <!-- ইনপুট ফিল্ডগুলো -->
                     <div>
                         <label for="name" class="block text-lg font-semibold text-gray-700 mb-2"><i class="fas fa-user mr-2 text-amber-600"></i>আপনার সম্পূর্ণ নাম *</label>
                         <input type="text" id="name" required class="input-field w-full p-4 text-lg rounded-xl" placeholder="নাম লিখুন" disabled>
@@ -257,8 +196,8 @@
                         <textarea id="address" rows="4" required class="input-field w-full p-4 text-lg rounded-xl" placeholder="বাসা/হোল্ডিং, রোড, এলাকা, থানা ও জেলা" disabled></textarea>
                     </div>
                 </div>
-                <div class="bg-green-50 p-6 rounded-2xl border-2 border-green-200 sticky top-28">
-                    <h4 class="text-2xl font-bold mb-5 text-center border-b-2 pb-3">অর্ডার সামারি</h4>
+                <div class="bg-green-50 p-6 rounded-3xl border-2 border-green-200 shadow-lg sticky top-28">
+                    <h4 class="text-2xl font-extrabold mb-5 text-center border-b-2 pb-3 border-green-300">অর্ডার সামারি</h4>
                     <div class="space-y-4 text-lg">
                         <div class="flex justify-between"><span>প্রোডাক্ট:</span> <span class="font-bold">স্পেশাল ঝালমুড়ি মশলা (১ কেজি)</span></div>
                         <div class="flex items-center justify-between">
@@ -274,12 +213,13 @@
                         <div id="coupon-discount-row" class="hidden flex justify-between text-red-500">
                             <span>কুপন ডিসকাউন্ট:</span> <span id="coupon-discount" class="font-bold">-৳০</span>
                         </div>
-                        <hr>
+                        <hr class="border-green-300">
                         <div class="flex justify-between items-center text-3xl font-extrabold">
                             <span>সর্বমোট:</span>
                             <span id="total-price" class="text-green-600">৳১,১৯০</span>
                         </div>
                     </div>
+                    <!-- কুপন সেকশন -->
                     <div class="mt-6 flex items-center space-x-2">
                         <input type="text" id="coupon-code-input" class="input-field flex-1 p-3 rounded-xl text-lg" placeholder="কুপন কোড লিখুন">
                         <button type="button" id="apply-coupon-btn" class="bg-amber-500 text-white px-6 py-3 rounded-full font-bold text-lg hover:bg-amber-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">প্রয়োগ</button>
@@ -300,7 +240,7 @@
         </section>
 
         <!-- Order History Section -->
-        <section id="orderHistorySection" class="bg-white p-8 md:p-12 rounded-3xl shadow-2xl animated-section">
+        <section id="orderHistorySection" class="bg-white p-8 md:p-12 rounded-3xl shadow-2xl animate-fadeIn animated-section">
             <h3 class="text-4xl font-extrabold text-center mb-10">আপনার পূর্ববর্তী অর্ডারসমূহ</h3>
             <div id="historyContainer" class="space-y-4 max-h-96 overflow-y-auto pr-2">
                 <p id="noHistoryMessage" class="text-center text-gray-500 text-lg">লগইন করলে এখানে আপনার অর্ডারের ইতিহাস দেখতে পারবেন।</p>
@@ -320,15 +260,15 @@
         </div>
     </footer>
 
-    <!-- Confirmation & Print Modal -->
-    <div id="confirmationModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[1000]" style="display: none;">
-        <div class="modal-content w-11/12 max-w-lg bg-white rounded-3xl shadow-2xl relative">
+    <!-- Confirmation Modal -->
+    <div id="confirmationModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[1000] hidden">
+        <div class="modal-content w-11/12 max-w-lg bg-white rounded-3xl shadow-2xl relative card-hover-effect">
             <button id="closeModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 text-2xl no-print">&times;</button>
             <div id="printable-receipt" class="p-8 md:p-12">
                 <div class="text-center">
                     <i class="fas fa-check-circle text-green-500 text-7xl"></i>
                     <h2 class="text-3xl font-extrabold text-gray-800 mt-5 mb-2">অর্ডারটি সফলভাবে গৃহীত হয়েছে!</h2>
-                    <p class="text-gray-600 text-lg mb-6">আমাদের প্রতিনিধি শীঘ্রই আপনার সাথে যোগাযোগ করবে। আপনার অর্ডারের বিবরণ নিচে দেওয়া হলো:</p>
+                    <p class="text-gray-600 text-lg mb-6">আমাদের প্রতিনিধি শীঘ্রই আপনার সাথে যোগাযোগ করবে।</p>
                 </div>
                 <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-6 space-y-3 text-lg">
                     <p><strong>অর্ডার আইডি:</strong> <span id="confOrderId"></span></p>
@@ -348,6 +288,15 @@
             </div>
         </div>
     </div>
+    
+    <!-- Custom Success/Error Modal -->
+    <div id="custom-alert-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[1001] hidden">
+        <div class="modal-content w-11/12 max-w-sm bg-white rounded-2xl shadow-2xl relative p-8 text-center">
+            <h3 id="alert-title" class="text-2xl font-bold mb-4"></h3>
+            <p id="alert-message" class="text-lg text-gray-700 mb-6"></p>
+            <button id="alert-ok-button" class="bg-green-500 text-white py-2 px-6 rounded-full font-bold hover:bg-green-600 transition-colors">ঠিক আছে</button>
+        </div>
+    </div>
 
     <script type="module">
         // Firebase SDKs আমদানি করা হচ্ছে
@@ -355,7 +304,7 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, collection, query, where, addDoc, onSnapshot, serverTimestamp, orderBy, updateDoc, doc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // আপনার দেওয়া Firebase কনফিগারেশন
+        // আপনার Firebase কনফিগারেশন
         const firebaseConfig = {
             apiKey: "AIzaSyCTvWKR6pt8HrHoiDHo3wqoSXtXdXJjHHQ",
             authDomain: "priya-ai-q14sj.firebaseapp.com",
@@ -401,11 +350,33 @@
         const commentTextarea = document.getElementById('comment-text');
         const commentsContainer = document.getElementById('comments-container');
         const noCommentsMessage = document.getElementById('no-comments-message');
+        const customAlertModal = document.getElementById('custom-alert-modal');
+        const alertTitle = document.getElementById('alert-title');
+        const alertMessage = document.getElementById('alert-message');
+        const alertOkButton = document.getElementById('alert-ok-button');
         
         let currentUser = null;
         let couponDiscount = 0;
         const BASE_PRICE = 1190;
-        const CANCEL_WINDOW_MS = 10 * 60 * 1000; // 10 মিনিট
+        const CANCEL_WINDOW_MS = 10 * 60 * 1000; // ১০ মিনিট
+
+        // কাস্টম alert() এর বিকল্প
+        function showAlert(title, message, isSuccess = true) {
+            alertTitle.textContent = title;
+            alertMessage.textContent = message;
+            if (isSuccess) {
+                alertTitle.classList.add('text-green-600');
+                alertTitle.classList.remove('text-red-600');
+                alertOkButton.classList.remove('bg-red-500', 'hover:bg-red-600');
+                alertOkButton.classList.add('bg-green-500', 'hover:bg-green-600');
+            } else {
+                alertTitle.classList.add('text-red-600');
+                alertTitle.classList.remove('text-green-600');
+                alertOkButton.classList.remove('bg-green-500', 'hover:bg-green-600');
+                alertOkButton.classList.add('bg-red-500', 'hover:bg-red-600');
+            }
+            customAlertModal.classList.remove('hidden');
+        }
 
         // Google লগইন ফাংশন
         async function signInWithGoogle() {
@@ -440,11 +411,13 @@
             const couponCode = couponCodeInput.value.trim();
             if (!couponCode) {
                 couponMessageElem.textContent = "অনুগ্রহ করে একটি কুপন কোড লিখুন।";
+                couponMessageElem.classList.remove('text-green-500');
+                couponMessageElem.classList.add('text-red-500');
                 return;
             }
 
             try {
-                const q = query(collection(db, "coupons"), where("code", "==", couponCode));
+                const q = query(collection(db, "coupons"), where("code", "==", couponCode.toUpperCase()));
                 const querySnapshot = await getDocs(q);
                 
                 if (!querySnapshot.empty) {
@@ -488,63 +461,74 @@
                 return;
             }
             
-            const q = query(collection(db, "orders"), where("userId", "==", userId), orderBy("timestamp", "desc"));
-            onSnapshot(q, (querySnapshot) => {
-                historyContainer.innerHTML = '';
-                if (querySnapshot.empty) {
-                    noHistoryMessage.style.display = 'block';
-                } else {
-                    noHistoryMessage.style.display = 'none';
-                    querySnapshot.forEach((docSnapshot) => {
-                        const order = docSnapshot.data();
-                        const orderId = docSnapshot.id;
-                        const orderTime = order.timestamp.toDate();
-                        const currentTime = new Date();
-                        const canCancel = (currentTime - orderTime) < CANCEL_WINDOW_MS && order.status === 'Pending';
-                        
-                        let statusColor = '';
-                        let statusText = '';
-                        if (order.status === 'Pending') {
-                            statusColor = 'bg-amber-500';
-                            statusText = 'প্রক্রিয়াধীন';
-                        } else if (order.status === 'Approved') {
-                            statusColor = 'bg-green-500';
-                            statusText = 'নিশ্চিত';
-                        } else if (order.status === 'Cancelled') {
-                            statusColor = 'bg-red-500';
-                            statusText = 'বাতিলকৃত';
-                        }
-
-                        orderCard.className = 'bg-green-50 p-4 rounded-xl border border-green-200 flex justify-between items-center transform hover:scale-[1.01] transition-transform duration-300';
-                        orderCard.innerHTML = `
-                            <div>
-                                <p class="font-bold">অর্ডার আইডি: ${order.id}</p>
-                                <p class="text-sm text-gray-600">তারিখ: ${orderTime.toLocaleDateString('bn-BD')} - পরিমাণ: ${order.quantity}</p>
-                                <span class="text-xs font-bold text-white px-2 py-1 rounded-full ${statusColor}">${statusText}</span>
-                            </div>
-                            <div class="flex items-center space-x-4">
-                                <p class="font-bold text-green-600 text-lg">৳ ${order.totalPrice.toLocaleString('bn-BD')}</p>
-                                ${canCancel ? `<button data-id="${orderId}" class="cancel-btn bg-red-500 text-white px-3 py-1 rounded-full font-bold text-sm hover:bg-red-600 transition-colors">বাতিল করুন</button>` : ''}
-                            </div>
-                        `;
-                        historyContainer.appendChild(orderCard);
-                    });
-
-                    // ক্যানসেল বাটনের জন্য ইভেন্ট লিসেনার
-                    document.querySelectorAll('.cancel-btn').forEach(button => {
-                        button.addEventListener('click', async (e) => {
-                            const orderToCancelId = e.target.dataset.id;
-                            try {
-                                const orderRef = doc(db, "orders", orderToCancelId);
-                                await updateDoc(orderRef, { status: 'Cancelled' });
-                                console.log("Order cancelled successfully!");
-                            } catch (error) {
-                                console.error("Error cancelling order:", error);
+            try {
+                const q = query(collection(db, "orders"), where("userId", "==", userId), orderBy("timestamp", "desc"));
+                onSnapshot(q, (querySnapshot) => {
+                    historyContainer.innerHTML = '';
+                    if (querySnapshot.empty) {
+                        noHistoryMessage.style.display = 'block';
+                    } else {
+                        noHistoryMessage.style.display = 'none';
+                        querySnapshot.forEach((docSnapshot) => {
+                            const order = docSnapshot.data();
+                            const orderId = docSnapshot.id;
+                            const orderTime = order.timestamp.toDate();
+                            const currentTime = new Date();
+                            const canCancel = (currentTime - orderTime) < CANCEL_WINDOW_MS && order.status === 'Pending';
+                            
+                            let statusColor = '';
+                            let statusText = '';
+                            if (order.status === 'Pending') {
+                                statusColor = 'bg-amber-500';
+                                statusText = 'প্রক্রিয়াধীন';
+                            } else if (order.status === 'Approved') {
+                                statusColor = 'bg-green-500';
+                                statusText = 'নিশ্চিত';
+                            } else if (order.status === 'Cancelled') {
+                                statusColor = 'bg-red-500';
+                                statusText = 'বাতিলকৃত';
                             }
+
+                            const orderCard = document.createElement('div');
+                            orderCard.className = 'bg-green-50 p-4 rounded-xl border border-green-200 flex justify-between items-center transform hover:scale-[1.01] transition-transform duration-300';
+                            orderCard.innerHTML = `
+                                <div>
+                                    <p class="font-bold">অর্ডার আইডি: ${order.id}</p>
+                                    <p class="text-sm text-gray-600">তারিখ: ${orderTime.toLocaleDateString('bn-BD')} - পরিমাণ: ${order.quantity}</p>
+                                    <span class="text-xs font-bold text-white px-2 py-1 rounded-full ${statusColor}">${statusText}</span>
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                    <p class="font-bold text-green-600 text-lg">৳ ${order.totalPrice.toLocaleString('bn-BD')}</p>
+                                    ${canCancel ? `<button data-id="${orderId}" class="cancel-btn bg-red-500 text-white px-3 py-1 rounded-full font-bold text-sm hover:bg-red-600 transition-colors">বাতিল করুন</button>` : ''}
+                                </div>
+                            `;
+                            historyContainer.appendChild(orderCard);
                         });
-                    });
-                }
-            });
+
+                        // ক্যানসেল বাটনের জন্য ইভেন্ট লিসেনার
+                        document.querySelectorAll('.cancel-btn').forEach(button => {
+                            button.addEventListener('click', async (e) => {
+                                const orderToCancelId = e.target.dataset.id;
+                                try {
+                                    const orderRef = doc(db, "orders", orderToCancelId);
+                                    await updateDoc(orderRef, { status: 'Cancelled' });
+                                    showAlert('সফল!', 'আপনার অর্ডারটি বাতিল করা হয়েছে।', true);
+                                } catch (error) {
+                                    console.error("Error cancelling order:", error);
+                                    showAlert('ব্যর্থ', 'অর্ডার বাতিল করতে সমস্যা হয়েছে।', false);
+                                }
+                            });
+                        });
+                    }
+                }, (error) => {
+                    // Firebase Security Rules ত্রুটি হলে এই ব্লকটি চলবে
+                    console.error("Firestore Security Rules ত্রুটি: অনুগ্রহ করে আপনার Firebase Security Rules পরীক্ষা করুন।", error);
+                    showAlert('ত্রুটি', 'অর্ডারের ইতিহাস লোড করতে ব্যর্থ। অনুগ্রহ করে এডমিনকে জানান।', false);
+                });
+            } catch (error) {
+                console.error("Firestore Security Rules ত্রুটি: অনুগ্রহ করে আপনার Firebase Security Rules পরীক্ষা করুন।", error);
+                showAlert('ত্রুটি', 'অর্ডারের ইতিহাস লোড করতে ব্যর্থ। অনুগ্রহ করে এডমিনকে জানান।', false);
+            }
         }
         
         // মন্তব্যগুলো Firestore থেকে লোড এবং রেন্ডার করার ফাংশন
@@ -552,43 +536,52 @@
             commentsContainer.innerHTML = '';
             noCommentsMessage.style.display = 'block';
 
-            const q = query(collection(db, "comments"), where("status", "==", "Approved"), orderBy("timestamp", "desc"));
-            onSnapshot(q, (querySnapshot) => {
-                commentsContainer.innerHTML = '';
-                if (querySnapshot.empty) {
-                    noCommentsMessage.style.display = 'block';
-                } else {
-                    noCommentsMessage.style.display = 'none';
-                    querySnapshot.forEach((docSnapshot) => {
-                        const comment = docSnapshot.data();
-                        const commentCard = document.createElement('div');
-                        commentCard.className = 'comment-card';
-                        
-                        let replyHtml = '';
-                        if (comment.adminReply) {
-                            replyHtml = `
-                                <div class="admin-reply">
-                                    <p class="font-bold text-green-800">এডমিন: <i class="fas fa-user-shield ml-1"></i></p>
-                                    <p class="text-gray-700">${comment.adminReply}</p>
-                                </div>
-                            `;
-                        }
+            try {
+                const q = query(collection(db, "comments"), where("status", "==", "Approved"), orderBy("timestamp", "desc"));
+                onSnapshot(q, (querySnapshot) => {
+                    commentsContainer.innerHTML = '';
+                    if (querySnapshot.empty) {
+                        noCommentsMessage.style.display = 'block';
+                    } else {
+                        noCommentsMessage.style.display = 'none';
+                        querySnapshot.forEach((docSnapshot) => {
+                            const comment = docSnapshot.data();
+                            const commentCard = document.createElement('div');
+                            commentCard.className = 'comment-card bg-white rounded-xl shadow-md p-6';
+                            
+                            let replyHtml = '';
+                            if (comment.adminReply) {
+                                replyHtml = `
+                                    <div class="admin-reply bg-gray-100 mt-4 p-4 rounded-xl border-l-4 border-green-500">
+                                        <p class="font-bold text-green-800">এডমিন: <i class="fas fa-user-shield ml-1"></i></p>
+                                        <p class="text-gray-700">${comment.adminReply}</p>
+                                    </div>
+                                `;
+                            }
 
-                        commentCard.innerHTML = `
-                            <div class="flex items-center space-x-4 mb-4">
-                                <img src="${comment.userPhotoURL || 'https://placehold.co/50x50/e2e8f0/334155?text=🧑'}" alt="${comment.userName}" class="w-12 h-12 rounded-full">
-                                <div>
-                                    <p class="font-bold text-xl">${comment.userName}</p>
-                                    <p class="text-sm text-gray-500">${new Date(comment.timestamp.seconds * 1000).toLocaleDateString('bn-BD')}</p>
+                            commentCard.innerHTML = `
+                                <div class="flex items-start space-x-4 mb-4">
+                                    <img src="${comment.userPhotoURL || 'https://placehold.co/50x50/e2e8f0/334155?text=🧑'}" alt="${comment.userName}" class="w-12 h-12 rounded-full border-2 border-gray-200 flex-shrink-0">
+                                    <div>
+                                        <p class="font-bold text-xl">${comment.userName}</p>
+                                        <p class="text-sm text-gray-500">${new Date(comment.timestamp.seconds * 1000).toLocaleDateString('bn-BD')}</p>
+                                    </div>
                                 </div>
-                            </div>
-                            <p class="text-lg text-gray-700">${comment.text}</p>
-                            ${replyHtml}
-                        `;
-                        commentsContainer.appendChild(commentCard);
-                    });
-                }
-            });
+                                <p class="text-lg text-gray-700">${comment.text}</p>
+                                ${replyHtml}
+                            `;
+                            commentsContainer.appendChild(commentCard);
+                        });
+                    }
+                }, (error) => {
+                    // Firebase Security Rules ত্রুটি হলে এই ব্লকটি চলবে
+                    console.error("Firestore Security Rules ত্রুটি: অনুগ্রহ করে আপনার Firebase Security Rules পরীক্ষা করুন।", error);
+                    showAlert('ত্রুটি', 'মন্তব্য লোড করতে ব্যর্থ। Firebase Security Rules পরীক্ষা করুন।', false);
+                });
+            } catch (error) {
+                console.error("Firestore Security Rules ত্রুটি: অনুগ্রহ করে আপনার Firebase Security Rules পরীক্ষা করুন।", error);
+                showAlert('ত্রুটি', 'মন্তব্য লোড করতে ব্যর্থ। অনুগ্রহ করে এডমিনকে জানান।', false);
+            }
         }
 
         // ফর্ম সাবমিট করার ফাংশন
@@ -616,7 +609,6 @@
 
             try {
                 await addDoc(collection(db, "orders"), newOrder);
-                console.log("অর্ডার সফলভাবে যোগ করা হয়েছে!");
                 
                 const orderDate = new Date();
                 document.getElementById('confOrderId').textContent = newOrder.id;
@@ -627,7 +619,7 @@
                 document.getElementById('confQuantity').textContent = quantity;
                 document.getElementById('confTotal').textContent = `৳ ${totalPrice.toLocaleString('bn-BD')}`;
                 
-                confirmationModal.style.display = 'flex';
+                confirmationModal.classList.remove('hidden');
                 
                 orderForm.reset();
                 quantityInput.value = 1;
@@ -638,6 +630,7 @@
                 checkFormValidity();
             } catch (error) {
                 console.error("অর্ডার যোগ করতে ব্যর্থ হয়েছে:", error);
+                showAlert('ব্যর্থ', 'অর্ডার জমা দিতে সমস্যা হয়েছে।', false);
             }
         }
         
@@ -662,66 +655,71 @@
             try {
                 await addDoc(collection(db, "comments"), newComment);
                 commentTextarea.value = '';
-                // Since `alert()` is not allowed, using a custom modal or message display
-                alert("আপনার মন্তব্য সফলভাবে জমা হয়েছে। এডমিন অ্যাপ্রুভ করলে তা দেখানো হবে।");
+                showAlert('সফল!', 'আপনার মন্তব্য সফলভাবে জমা হয়েছে। এডমিন অ্যাপ্রুভ করলে তা দেখানো হবে।', true);
             } catch (error) {
                 console.error("Error submitting comment:", error);
+                showAlert('ব্যর্থ', 'মন্তব্য জমা দিতে সমস্যা হয়েছে।', false);
             }
         }
 
         //AuthState পরিবর্তন হলে এই ফাংশনটি কল হবে
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                currentUser = user;
-                authUI.innerHTML = `
-                    <div class="user-profile relative group">
-                        <img src="${user.photoURL || 'https://placehold.co/40x40/e2e8f0/334155?text=🧑'}" alt="${user.displayName}" class="w-10 h-10 rounded-full border-2 border-green-500">
-                        <span class="user-name font-semibold text-gray-800 hidden md:inline-block">${user.displayName.split(' ')[0]}</span>
-                        <div class="user-menu absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg p-2 opacity-0 group-hover:opacity-100 transition-opacity z-50">
-                            <p class="px-4 py-2 font-bold text-gray-800 border-b pb-2">স্বাগতম, ${user.displayName.split(' ')[0]}</p>
-                            <button id="signOutButton" class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors font-semibold mt-2">
-                                <i class="fas fa-sign-out-alt mr-2"></i> লগআউট
-                            </button>
+        function setupAuthAndListeners() {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUser = user;
+                    authUI.innerHTML = `
+                        <div class="user-profile relative group flex items-center gap-2 cursor-pointer transition-all duration-300">
+                            <img src="${user.photoURL || 'https://placehold.co/40x40/e2e8f0/334155?text=🧑'}" alt="${user.displayName}" class="w-10 h-10 rounded-full border-2 border-green-500">
+                            <span class="user-name font-semibold text-gray-800 hidden md:inline-block">${user.displayName.split(' ')[0]}</span>
+                            <div class="user-menu absolute hidden group-hover:block transition-all duration-300 w-48 bg-white rounded-xl shadow-lg p-2 z-50 animate-popIn">
+                                <p class="px-4 py-2 font-bold text-gray-800 border-b pb-2">স্বাগতম, ${user.displayName.split(' ')[0]}</p>
+                                <button id="signOutButton" class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors font-semibold mt-2">
+                                    <i class="fas fa-sign-out-alt mr-2"></i> লগআউট
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                `;
-                document.getElementById('signOutButton').addEventListener('click', handleSignOut);
+                    `;
+                    document.getElementById('signOutButton').addEventListener('click', handleSignOut);
 
-                loginPrompt.textContent = "আপনার অর্ডারের ইতিহাস দেখতে নিচে স্ক্রল করুন।";
-                loginPrompt.className = 'text-lg text-green-500 mt-2 font-semibold flex items-center justify-center';
-                
-                requiredFields.forEach(field => field.disabled = false);
-                commentFormContainer.classList.remove('hidden');
-                checkFormValidity();
-                displayOrderHistory(user.uid);
-            } else {
-                currentUser = null;
-                authUI.innerHTML = `
-                    <button id="googleSignInButton" class="btn-google-login text-white py-2 px-4 rounded-full font-bold flex items-center space-x-2 shadow-lg">
-                        <i class="fab fa-google"></i>
-                        <span>Google দিয়ে লগইন করুন</span>
-                    </button>
-                `;
-                document.getElementById('googleSignInButton').addEventListener('click', signInWithGoogle);
+                    loginPrompt.textContent = "আপনার অর্ডারের ইতিহাস দেখতে নিচে স্ক্রল করুন।";
+                    loginPrompt.className = 'text-lg text-green-500 mt-2 font-semibold flex items-center justify-center';
+                    
+                    requiredFields.forEach(field => field.disabled = false);
+                    commentFormContainer.classList.remove('hidden');
+                    checkFormValidity();
+                    displayOrderHistory(user.uid);
+                } else {
+                    currentUser = null;
+                    authUI.innerHTML = `
+                        <button id="googleSignInButton" class="bg-blue-500 text-white py-2 px-4 rounded-full font-bold flex items-center space-x-2 shadow-lg hover:bg-blue-600 transition-colors">
+                            <i class="fab fa-google"></i>
+                            <span>Google দিয়ে লগইন করুন</span>
+                        </button>
+                    `;
+                    document.getElementById('googleSignInButton').addEventListener('click', signInWithGoogle);
 
-                loginPrompt.innerHTML = `<i class="fas fa-exclamation-circle mr-2"></i> অর্ডার করার আগে অনুগ্রহ করে লগইন করুন।`;
-                loginPrompt.className = 'text-lg text-red-500 mt-2 font-semibold flex items-center justify-center';
-                
-                requiredFields.forEach(field => field.disabled = true);
-                submitButton.disabled = true;
-                commentFormContainer.classList.add('hidden');
-                displayOrderHistory(null);
-            }
-        });
-
+                    loginPrompt.innerHTML = `<i class="fas fa-exclamation-circle mr-2"></i> অর্ডার করার আগে অনুগ্রহ করে লগইন করুন।`;
+                    loginPrompt.className = 'text-lg text-red-500 mt-2 font-semibold flex items-center justify-center';
+                    
+                    requiredFields.forEach(field => field.disabled = true);
+                    submitButton.disabled = true;
+                    commentFormContainer.classList.add('hidden');
+                    displayOrderHistory(null);
+                }
+            });
+        }
+        
         // ইভেন্ট লিসেনার সেট করা
         document.addEventListener('DOMContentLoaded', function() {
+            // এই ফাংশনটি DOM লোড হওয়ার পর কল হবে
+            setupAuthAndListeners();
             orderForm.addEventListener('submit', handleFormSubmit);
             requiredFields.forEach(field => field.addEventListener('input', checkFormValidity));
-            closeModal.addEventListener('click', () => confirmationModal.style.display = 'none');
+            closeModal.addEventListener('click', () => confirmationModal.classList.add('hidden'));
             printButton.addEventListener('click', () => window.print());
             commentForm.addEventListener('submit', handleCommentSubmit);
             applyCouponBtn.addEventListener('click', applyCoupon);
+            alertOkButton.addEventListener('click', () => customAlertModal.classList.add('hidden'));
             
             decrementBtn.addEventListener('click', () => {
                 let currentQty = parseInt(quantityInput.value);
@@ -741,21 +739,7 @@
             // Initial load
             calculateTotal();
             displayComments();
-
-            const animatedSections = document.querySelectorAll('.animated-section');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.animationDelay = `${Array.from(animatedSections).indexOf(entry.target) * 0.1}s`;
-                        entry.target.classList.add('is-visible');
-                        entry.target.style.opacity = '1';
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.1 });
-
-            animatedSections.forEach(section => observer.observe(section));
         });
     </script>
 </body>
-                        </html>
+</html>
