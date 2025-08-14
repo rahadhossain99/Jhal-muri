@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>স্পেশাল ঝালমুড়ি মশলা - eFoodDokan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        /* --- Animations --- */
+        @keyframes slideInUp { from { opacity: 0; transform: translateY(40px); } to: { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to: { opacity: 1; } }
+        @keyframes pulse-shadow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+            70% { box-shadow: 0 0 0 20px rgba(220, 38, 38, 0); }
+        }
+        @keyframes slideInLeft { from { transform: translateX(-100%); } to: { transform: translateX(0); } }
+        @keyframes slideOutLeft { from { transform: translateX(0); } to: { transform: translateX(-100%); } }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* --- Base Styles --- */
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans Bengali', sans-serif;
+            background-color: #f0fdf4; /* Light Green Background */
+            background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%2322c55e" fill-opacity="0.04"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+        }
+
+        /* --- Component Styles --- */
+        .animated-section { opacity: 0; }
+        .visible { animation: slideInUp 0.8s ease-out forwards; }
+        .btn-order {
+            background-image: linear-gradient(to right, #f59e0b 0%, #ef4444 51%, #f59e0b 100%);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+            transition: all 0.4s ease-in-out;
+            background-size: 200% auto;
+            animation: pulse-shadow 2.5s infinite;
+        }
+        .btn-order:hover {
+            background-position: right center;
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+            animation: none;
+        }
+        .input-field {
+            background-color: #f0fdf4; border: 2px solid #a7f3d0; transition: all 0.3s ease;
+        }
+        .input-field:focus {
+            border-color: #10b981; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+            background-color: #ffffff; transform: scale(1.01);
+        }
+        .side-menu {
+            animation-duration: 0.4s;
+            animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform;
+        }
+        .side-menu.open { animation-name: slideInLeft; }
+        .side-menu.closed { animation-name: slideOutLeft; }
+        
+        /* --- Utility & Helper Styles --- */
+        .loader {
+            width: 24px; height: 24px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        .skeleton-loader {
+            background-color: #e5e7eb;
+            border-radius: 0.5rem;
+            animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            50% { opacity: .5; }
+        }
+        
+        /* --- Print Styles --- */
+        @media print {
+            body * { visibility: hidden; }
+            #printable-receipt, #printable-receipt * { visibility: visible; }
+            #printable-receipt { position: absolute; left: 0; top: 0; width: 100%; padding: 2rem; border: 2px solid #000; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Side Menu (for Login/Profile) -->
+    <div id="sideMenuOverlay" class="fixed inset-0 bg-black/60 z-[1001] transition-opacity duration-300" style="display: none; opacity: 0;"></div>
+    <div id="sideMenu" class="side-menu closed fixed top-0 left-0 w-full max-w-sm h-full bg-white shadow-2xl z-[1002] -translate-x-full">
+        <div class="p-6 flex flex-col h-full">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-800">প্রোফাইল</h2>
+                <button id="closeMenuBtn" class="text-3xl text-gray-400 hover:text-red-500 transition-transform duration-300 hover:rotate-90">&times;</button>
+            </div>
+            
+            <!-- User Info Display -->
+            <div id="userInfo" class="text-center" style="display: none;">
+                <img id="userPhoto" class="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-green-400 shadow-lg">
+                <h3 id="userName" class="text-xl font-bold"></h3>
+                <p id="userEmail" class="text-gray-500"></p>
+                <button id="logoutBtn" class="mt-6 w-full bg-red-500 text-white py-2.5 rounded-lg hover:bg-red-600 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2">
+                    <i class="fas fa-sign-out-alt"></i> লগ আউট
+                </button>
+            </div>
+
+            <!-- Login Prompt -->
+            <div id="loginPrompt" class="text-center my-auto flex flex-col items-center justify-center">
+                <i class="fas fa-user-lock text-5xl text-gray-300 mb-4"></i>
+                <p class="mb-4 text-lg text-gray-600">অর্ডার হিস্টোরি ও দ্রুত অর্ডারের জন্য লগইন করুন।</p>
+                <button id="loginBtn" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2">
+                    <i class="fab fa-google"></i> Google দিয়ে লগইন করুন
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="bg-white/95 backdrop-blur-lg shadow-lg sticky top-0 z-50 rounded-b-3xl">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center py-3">
+            <a href="#" class="flex items-center space-x-3">
+                <img src="https://i.postimg.cc/qRSXYFQJ/chalmuri-masla-800x800.webp" alt="লোগো" class="w-12 h-12 rounded-full border-2 border-amber-500 shadow-md">
+                <h1 class="text-2xl md:text-3xl font-extrabold text-gray-800">eFoodDokan</h1>
+            </a>
+            <div class="flex items-center space-x-4">
+                <button id="menuBtn" class="text-gray-600 hover:text-amber-600 transition-colors" title="প্রোফাইল">
+                    <i class="fas fa-user-circle fa-2x"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 mb-20 space-y-24">
+        <!-- Hero Section -->
+        <section class="text-center animated-section">
+            <h2 class="text-4xl md:text-6xl font-extrabold text-gray-900 leading-tight">
+                সেই চিরচেনা স্বাদ, এখন <span class="text-amber-600">আপনার রান্নাঘরে!</span>
+            </h2>
+            <p class="mt-5 max-w-3xl mx-auto text-xl text-gray-600">
+                আমাদের হাতে তৈরি স্পেশাল গরুর কিমার ঝালমুড়ি মশলা দিয়ে ঘরেই উপভোগ করুন রাস্তার সেই পাগল করা স্বাদ। স্বাস্থ্যকর এবং কেমিক্যালমুক্ত, স্বাদে অতুলনীয়।
+            </p>
+            <div class="mt-10">
+                <a href="#orderFormSection" class="btn-order text-white py-4 px-12 rounded-full font-bold text-2xl inline-block">
+                    <i class="fas fa-shopping-basket fa-bounce mr-3"></i>
+                    এখনই অর্ডার করুন
+                </a>
+                <p class="mt-5 text-3xl font-bold">বিশেষ ছাড়ে মাত্র <span class="text-green-600">৳১,১৯০</span> <del class="text-gray-400 text-xl">৳১,৫০০</del></p>
+            </div>
+            <img src="https://i.postimg.cc/rmKNfT1Z/Jhalmuri-Mosla.webp" alt="ঝালমুড়ি মশলার আকর্ষণীয় ছবি" class="mt-10 rounded-3xl shadow-2xl w-full max-w-4xl mx-auto transform hover:scale-105 transition-transform duration-500">
+        </section>
+        
+        <!-- Why Us Section -->
+        <section class="bg-white p-8 md:p-12 rounded-3xl shadow-2xl animated-section">
+            <h3 class="text-4xl font-extrabold text-center mb-12">কেন আমাদের মশলাই সেরা?</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div class="flex flex-col items-center">
+                    <div class="bg-amber-100 text-amber-600 text-4xl rounded-full w-24 h-24 flex-shrink-0 flex items-center justify-center mb-4 shadow-inner"><i class="fas fa-pepper-hot"></i></div>
+                    <h4 class="text-2xl font-bold">রাজকীয় স্বাদ</h4>
+                    <p class="mt-2 text-gray-700">বাছাই করা গরুর কিমা ও ১৮ পদের বিশেষ মশলার মিশ্রণ, যা সাধারণ ঝালমুড়িকে করে তোলে অসাধারণ।</p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="bg-green-100 text-green-600 text-4xl rounded-full w-24 h-24 flex-shrink-0 flex items-center justify-center mb-4 shadow-inner"><i class="fas fa-shield-alt"></i></div>
+                    <h4 class="text-2xl font-bold">সম্পূর্ণ নিরাপদ</h4>
+                    <p class="mt-2 text-gray-700">কোনো প্রকার কেমিক্যাল, টেস্টিং সল্ট বা প্রিজারভেটিভ ছাড়াই তৈরি। আপনার স্বাস্থ্যই আমাদের প্রথম অগ্রাধিকার।</p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="bg-red-100 text-red-600 text-4xl rounded-full w-24 h-24 flex-shrink-0 flex items-center justify-center mb-4 shadow-inner"><i class="fas fa-hand-holding-heart"></i></div>
+                    <h4 class="text-2xl font-bold">আস্থা ও ভালোবাসা</h4>
+                    <p class="mt-2 text-gray-700">আমরা শুধু মশলা বিক্রি করি না, আমরা খাবারের প্রতি ভালোবাসা আর আস্থার সম্পর্ক তৈরি করি।</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="animated-section">
+            <h3 class="text-4xl font-extrabold text-center mb-10">ক্রেতাদের মতামত</h3>
+            <div id="testimonialsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Skeleton Loaders for Testimonials -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg"><div class="flex items-center mb-4"><div class="skeleton-loader w-14 h-14 rounded-full mr-4"></div><div><div class="skeleton-loader h-5 w-32 mb-2"></div><div class="skeleton-loader h-4 w-24"></div></div></div><div class="skeleton-loader h-4 w-full mt-2"></div><div class="skeleton-loader h-4 w-5/6 mt-2"></div></div>
+                <div class="bg-white p-6 rounded-2xl shadow-lg"><div class="flex items-center mb-4"><div class="skeleton-loader w-14 h-14 rounded-full mr-4"></div><div><div class="skeleton-loader h-5 w-32 mb-2"></div><div class="skeleton-loader h-4 w-24"></div></div></div><div class="skeleton-loader h-4 w-full mt-2"></div><div class="skeleton-loader h-4 w-5/6 mt-2"></div></div>
+                <div class="bg-white p-6 rounded-2xl shadow-lg"><div class="flex items-center mb-4"><div class="skeleton-loader w-14 h-14 rounded-full mr-4"></div><div><div class="skeleton-loader h-5 w-32 mb-2"></div><div class="skeleton-loader h-4 w-24"></div></div></div><div class="skeleton-loader h-4 w-full mt-2"></div><div class="skeleton-loader h-4 w-5/6 mt-2"></div></div>
+            </div>
+            <p id="noTestimonials" class="text-center text-gray-500 text-lg py-8" style="display: none;">এখনো কোনো মন্তব্য পাওয়া যায়নি।</p>
+        </section>
+        
+        <!-- Order Form Section -->
+        <section id="orderFormSection" class="bg-white p-8 md:p-12 rounded-3xl shadow-2xl animated-section">
+             <div class="text-center mb-10">
+                <h3 class="text-4xl font-extrabold">অর্ডার করতে ফর্মটি পূরণ করুন</h3>
+                <p class="text-lg text-gray-600 mt-2">আপনার দেওয়া তথ্যের ভিত্তিতে আমরা দ্রুত আপনার সাথে যোগাযোগ করব।</p>
+            </div>
+            <form id="orderForm" class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+                <div class="space-y-6">
+                    <div>
+                        <label for="name" class="block text-lg font-semibold text-gray-700 mb-2"><i class="fas fa-user mr-2 text-amber-600"></i>আপনার সম্পূর্ণ নাম *</label>
+                        <input type="text" id="name" required class="input-field w-full p-4 text-lg rounded-xl" placeholder="নাম লিখুন">
+                    </div>
+                    <div>
+                        <label for="phone" class="block text-lg font-semibold text-gray-700 mb-2"><i class="fas fa-phone-alt mr-2 text-amber-600"></i>মোবাইল নাম্বার *</label>
+                        <input type="tel" id="phone" required class="input-field w-full p-4 text-lg rounded-xl" placeholder="সচল মোবাইল নাম্বার দিন">
+                    </div>
+                    <div>
+                        <label for="address" class="block text-lg font-semibold text-gray-700 mb-2"><i class="fas fa-map-marker-alt mr-2 text-amber-600"></i>সম্পূর্ণ ঠিকানা *</label>
+                        <textarea id="address" rows="4" required class="input-field w-full p-4 text-lg rounded-xl" placeholder="বাসা/হোল্ডিং, রোড, এলাকা, থানা ও জেলা"></textarea>
+                    </div>
+                </div>
+                <div class="bg-green-50 p-6 rounded-2xl border-2 border-green-200 sticky top-28">
+                    <h4 class="text-2xl font-bold mb-5 text-center border-b-2 pb-3">অর্ডার সামারি</h4>
+                    <div class="space-y-4 text-lg">
+                        <div class="flex justify-between"><span>প্রোডাক্ট:</span> <span class="font-bold">স্পেশাল ঝালমুড়ি মশলা (১ কেজি)</span></div>
+                        <div class="flex justify-between"><span>ডেলিভারি চার্জ:</span> <span class="font-bold text-green-600">ফ্রি</span></div>
+                        <hr>
+                        <div class="flex justify-between items-center text-3xl font-extrabold">
+                            <span>সর্বমোট:</span>
+                            <span class="text-green-600">৳১,১৯০</span>
+                        </div>
+                    </div>
+                    <div class="mt-6 bg-green-100 p-4 rounded-lg text-green-800 font-semibold text-center">
+                        <i class="fas fa-money-bill-wave mr-2"></i>
+                        ক্যাশ অন ডেলিভারি (পণ্য হাতে পেয়ে টাকা দিন)
+                    </div>
+                    <div class="mt-8">
+                        <button type="submit" id="submitOrderBtn" class="w-full bg-green-600 text-white py-4 px-6 rounded-full font-bold text-xl flex items-center justify-center hover:bg-green-700 transition-all duration-300 transform hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:scale-100" disabled>
+                            <span class="btn-text"><i class="fas fa-check-circle mr-3"></i>অর্ডার কনফার্ম করুন</span>
+                            <div class="loader" style="display: none;"></div>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <!-- Review & History Tabs -->
+        <section class="bg-white p-8 md:p-12 rounded-3xl shadow-2xl animated-section">
+            <div class="flex border-b border-gray-200 mb-6">
+                <button data-tab="history" class="tab-btn active-tab py-3 px-6 font-bold text-lg border-b-4 border-amber-500 text-amber-600">অর্ডার হিস্টোরি</button>
+                <button data-tab="review" class="tab-btn py-3 px-6 font-bold text-lg border-b-4 border-transparent text-gray-500">মতামত দিন</button>
+            </div>
+
+            <!-- Order History Content -->
+            <div id="historyContent" class="tab-content">
+                <div id="historyContainer" class="space-y-4 max-h-96 overflow-y-auto pr-2">
+                    <!-- Skeleton Loader for History -->
+                    <div class="bg-gray-50 p-4 rounded-xl border flex justify-between items-center"><div class="flex-grow pr-4"> <div class="skeleton-loader h-5 w-2/3 mb-2"></div> <div class="skeleton-loader h-4 w-1/2"></div> </div><div class="skeleton-loader h-8 w-24 rounded-full"></div></div>
+                    <div class="bg-gray-50 p-4 rounded-xl border flex justify-between items-center"><div class="flex-grow pr-4"> <div class="skeleton-loader h-5 w-2/3 mb-2"></div> <div class="skeleton-loader h-4 w-1/2"></div> </div><div class="skeleton-loader h-8 w-24 rounded-full"></div></div>
+                </div>
+                <div id="historyLoginPrompt" class="text-center py-10" style="display: none;">
+                     <i class="fas fa-history text-5xl text-gray-300 mb-4"></i>
+                    <p class="text-gray-600 text-lg mb-4">আপনার পূর্ববর্তী অর্ডারগুলো দেখতে লগইন করুন।</p>
+                    <button class="login-prompt-btn bg-amber-500 text-white py-2 px-6 rounded-lg hover:bg-amber-600">লগইন করুন</button>
+                </div>
+            </div>
+
+            <!-- Review Submission Content -->
+            <div id="reviewContent" class="tab-content" style="display: none;">
+                <div id="reviewFormContainer">
+                    <form id="reviewForm">
+                        <textarea id="reviewText" class="input-field w-full p-4 text-lg rounded-xl" rows="4" placeholder="আমাদের মশলা আপনার কেমন লাগলো? আপনার অভিজ্ঞতা শেয়ার করুন..." required></textarea>
+                        <div class="text-center mt-6">
+                            <button type="submit" id="submitReviewBtn" class="bg-amber-500 text-white py-3 px-8 rounded-full font-bold text-lg hover:bg-amber-600 transition-colors">মতামত জমা দিন</button>
+                        </div>
+                    </form>
+                </div>
+                <div id="reviewLoginPrompt" class="text-center py-10" style="display: none;">
+                    <i class="fas fa-comments text-5xl text-gray-300 mb-4"></i>
+                    <p class="text-gray-600 text-lg mb-4">আপনার মূল্যবান মতামত শেয়ার করতে লগইন করুন।</p>
+                    <button class="login-prompt-btn bg-amber-500 text-white py-2 px-6 rounded-lg hover:bg-amber-600">লগইন করুন</button>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Confirmation & Print Modal -->
+    <div id="confirmationModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[1000] p-4" style="display: none; animation: fadeIn 0.3s ease;">
+         <div class="w-full max-w-lg bg-white rounded-3xl shadow-2xl relative">
+            <button id="closeModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 text-2xl no-print">&times;</button>
+            <div id="printable-receipt" class="p-8 md:p-12">
+                <div class="text-center">
+                    <i class="fas fa-check-circle text-green-500 text-7xl"></i>
+                    <h2 class="text-3xl font-extrabold text-gray-800 mt-5 mb-2">অর্ডারটি সফলভাবে গৃহীত হয়েছে!</h2>
+                    <p class="text-gray-600 text-lg mb-6">আমাদের প্রতিনিধি শীঘ্রই আপনার সাথে যোগাযোগ করবে। আপনার অর্ডারের বিবরণ নিচে দেওয়া হলো:</p>
+                </div>
+                <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-6 space-y-3 text-lg">
+                    <p><strong>অর্ডার আইডি:</strong> <span id="confOrderId"></span></p>
+                    <p><strong>নাম:</strong> <span id="confName"></span></p>
+                    <p><strong>ফোন:</strong> <span id="confPhone"></span></p>
+                    <p><strong>ঠিকানা:</strong> <span id="confAddress"></span></p>
+                    <p><strong>তারিখ:</strong> <span id="confDate"></span></p>
+                    <hr class="my-3">
+                    <p class="text-xl font-bold"><strong>সর্বমোট বিল:</strong> <span id="confTotal" class="text-green-600">৳ ১,১৯০</span></p>
+                </div>
+                <div class="mt-8 text-center no-print">
+                    <button id="printButton" class="bg-gray-800 text-white py-3 px-8 rounded-full font-bold text-lg hover:bg-gray-900 transform hover:scale-105 transition-all">
+                        <i class="fas fa-print mr-2"></i> প্রিন্ট করুন
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Simple Notification Toast -->
+    <div id="toast" class="fixed bottom-10 right-10 bg-gray-900 text-white py-3 px-6 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-500 z-[1003]">
+        <p id="toastMessage"></p>
+    </div>
+
+    <script type="module">
+        // Import Firebase functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, addDoc, query, where, getDocs, serverTimestamp, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // IMPORTANT: Replace with your actual Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyApEbQ5JYuheJymBRw1JsV9Rsu2SXVA4ig",
+            authDomain: "tic-tac-toe-ai-master-ga6rn.firebaseapp.com",
+            projectId: "tic-tac-toe-ai-master-ga6rn",
+            storageBucket: "tic-tac-toe-ai-master-ga6rn.firebasestorage.app",
+            messagingSenderId: "133198852579",
+            appId: "1:133198852579:web:fa64646966b65a990eb0d6"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
+
+        let currentUser = null;
+
+        // --- UI Element Cache ---
+        const UI = {
+            menuBtn: document.getElementById('menuBtn'),
+            closeMenuBtn: document.getElementById('closeMenuBtn'),
+            sideMenu: document.getElementById('sideMenu'),
+            sideMenuOverlay: document.getElementById('sideMenuOverlay'),
+            loginBtn: document.getElementById('loginBtn'),
+            logoutBtn: document.getElementById('logoutBtn'),
+            userInfo: document.getElementById('userInfo'),
+            loginPrompt: document.getElementById('loginPrompt'),
+            userPhoto: document.getElementById('userPhoto'),
+            userName: document.getElementById('userName'),
+            userEmail: document.getElementById('userEmail'),
+            orderForm: document.getElementById('orderForm'),
+            submitOrderBtn: document.getElementById('submitOrderBtn'),
+            orderRequiredFields: Array.from(document.getElementById('orderForm').querySelectorAll('[required]')),
+            confirmationModal: document.getElementById('confirmationModal'),
+            closeModal: document.getElementById('closeModal'),
+            printButton: document.getElementById('printButton'),
+            reviewForm: document.getElementById('reviewForm'),
+            submitReviewBtn: document.getElementById('submitReviewBtn'),
+            testimonialsContainer: document.getElementById('testimonialsContainer'),
+            noTestimonials: document.getElementById('noTestimonials'),
+            historyContainer: document.getElementById('historyContainer'),
+            historyLoginPrompt: document.getElementById('historyLoginPrompt'),
+            reviewContent: document.getElementById('reviewContent'),
+            reviewLoginPrompt: document.getElementById('reviewLoginPrompt'),
+            toast: document.getElementById('toast'),
+            toastMessage: document.getElementById('toastMessage'),
+            tabButtons: document.querySelectorAll('.tab-btn'),
+            tabContents: document.querySelectorAll('.tab-content'),
+            loginPromptButtons: document.querySelectorAll('.login-prompt-btn'),
+        };
+
+        // --- Toast Notification ---
+        const showToast = (message, duration = 3000) => {
+            UI.toastMessage.textContent = message;
+            UI.toast.classList.remove('translate-y-20', 'opacity-0');
+            UI.toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                UI.toast.classList.remove('translate-y-0', 'opacity-100');
+                UI.toast.classList.add('translate-y-20', 'opacity-0');
+            }, duration);
+        };
+
+        // --- Side Menu Logic ---
+        const toggleMenu = () => {
+            const isHidden = UI.sideMenu.classList.contains('-translate-x-full');
+            if (isHidden) {
+                UI.sideMenuOverlay.style.display = 'block';
+                requestAnimationFrame(() => {
+                    UI.sideMenu.classList.remove('-translate-x-full', 'closed');
+                    UI.sideMenu.classList.add('open');
+                    UI.sideMenuOverlay.style.opacity = '1';
+                });
+            } else {
+                UI.sideMenu.classList.remove('open');
+                UI.sideMenu.classList.add('closed');
+                UI.sideMenuOverlay.style.opacity = '0';
+                setTimeout(() => {
+                    UI.sideMenu.classList.add('-translate-x-full');
+                    UI.sideMenuOverlay.style.display = 'none';
+                }, 400);
+            }
+        };
+
+        // --- Authentication ---
+        const handleLogin = () => {
+            signInWithPopup(auth, provider)
+                .then(() => showToast('সফলভাবে লগইন হয়েছে!'))
+                .catch(error => {
+                    console.error("Login Error:", error);
+                    showToast('লগইন করতে সমস্যা হয়েছে।');
+                })
+                .finally(toggleMenu);
+        };
+
+        const handleLogout = () => {
+            signOut(auth)
+                .then(() => showToast('সফলভাবে লগ আউট হয়েছে!'))
+                .catch(error => console.error("Logout Error:", error))
+                .finally(toggleMenu);
+        };
+        
+        const updateUIForAuthState = (user) => {
+            currentUser = user;
+            if (user) {
+                // User is signed in
+                UI.userInfo.style.display = 'block';
+                UI.loginPrompt.style.display = 'none';
+                UI.userPhoto.src = user.photoURL;
+                UI.userName.textContent = user.displayName;
+                UI.userEmail.textContent = user.email;
+                
+                document.getElementById('name').value = user.displayName || '';
+                document.getElementById('phone').focus();
+
+                // Update Review & History sections
+                UI.reviewLoginPrompt.style.display = 'none';
+                UI.reviewForm.parentElement.style.display = 'block';
+                UI.historyLoginPrompt.style.display = 'none';
+                UI.historyContainer.style.display = 'block';
+
+                renderOrderHistory();
+            } else {
+                // User is signed out
+                UI.userInfo.style.display = 'none';
+                UI.loginPrompt.style.display = 'block';
+                
+                // Show login prompts for protected sections
+                UI.reviewLoginPrompt.style.display = 'block';
+                UI.reviewForm.parentElement.style.display = 'none';
+                UI.historyLoginPrompt.style.display = 'block';
+                UI.historyContainer.style.display = 'none';
+            }
+            checkOrderFormValidity();
+        };
+
+        // --- Order Logic ---
+        const checkOrderFormValidity = () => {
+            const allValid = UI.orderRequiredFields.every(field => field.value.trim() !== '');
+            UI.submitOrderBtn.disabled = !allValid;
+        };
+
+        const handleOrderSubmit = async (e) => {
+            e.preventDefault();
+            if (UI.submitOrderBtn.disabled) return;
+
+            // Show loader
+            UI.submitOrderBtn.querySelector('.btn-text').style.display = 'none';
+            UI.submitOrderBtn.querySelector('.loader').style.display = 'block';
+            UI.submitOrderBtn.disabled = true;
+
+            const orderData = {
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value,
+                product: 'স্পেশাল ঝালমুড়ি মশলা (১ কেজি)',
+                total: 1190,
+                status: 'Pending',
+                timestamp: serverTimestamp(),
+                userId: currentUser ? currentUser.uid : null,
+                userEmail: currentUser ? currentUser.email : null
+            };
+
+            try {
+                const docRef = await addDoc(collection(db, "orders"), orderData);
+                
+                // Display Confirmation Modal
+                document.getElementById('confOrderId').textContent = docRef.id.slice(-6).toUpperCase();
+                document.getElementById('confName').textContent = orderData.name;
+                document.getElementById('confPhone').textContent = orderData.phone;
+                document.getElementById('confAddress').textContent = orderData.address;
+                document.getElementById('confDate').textContent = new Date().toLocaleString('bn-BD');
+                
+                UI.confirmationModal.style.display = 'flex';
+                UI.orderForm.reset();
+                if (currentUser) renderOrderHistory();
+
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                showToast('দুঃখিত, অর্ডারটি সম্পন্ন করা যায়নি।');
+            } finally {
+                // Hide loader
+                UI.submitOrderBtn.querySelector('.btn-text').style.display = 'flex';
+                UI.submitOrderBtn.querySelector('.loader').style.display = 'none';
+                checkOrderFormValidity();
+            }
+        };
+
+        // --- Review Logic ---
+        const handleReviewSubmit = async (e) => {
+            e.preventDefault();
+            if (!currentUser) {
+                showToast('মতামত দিতে লগইন করুন।');
+                return;
+            }
+
+            const reviewText = document.getElementById('reviewText').value;
+            if (reviewText.trim() === '') return;
+
+            UI.submitReviewBtn.disabled = true;
+            UI.submitReviewBtn.textContent = 'জমা হচ্ছে...';
+
+            const reviewData = {
+                text: reviewText,
+                authorName: currentUser.displayName,
+                authorPhoto: currentUser.photoURL,
+                status: 'pending', // Admin must approve this
+                timestamp: serverTimestamp()
+            };
+
+            try {
+                await addDoc(collection(db, "testimonials"), reviewData);
+                showToast('আপনার মতামত সফলভাবে জমা হয়েছে!');
+                UI.reviewForm.reset();
+            } catch (error) {
+                console.error("Error submitting review: ", error);
+                showToast('মতামত জমা দিতে সমস্যা হয়েছে।');
+            } finally {
+                UI.submitReviewBtn.disabled = false;
+                UI.submitReviewBtn.textContent = 'মতামত জমা দিন';
+            }
+        };
+
+        // --- Data Fetching & Rendering ---
+        const renderOrderHistory = async () => {
+            if (!currentUser) return; 
+            
+            UI.historyContainer.innerHTML = `
+                <div class="bg-gray-50 p-4 rounded-xl border flex justify-between items-center"><div class="flex-grow pr-4"> <div class="skeleton-loader h-5 w-2/3 mb-2"></div> <div class="skeleton-loader h-4 w-1/2"></div> </div><div class="skeleton-loader h-8 w-24 rounded-full"></div></div>
+                <div class="bg-gray-50 p-4 rounded-xl border flex justify-between items-center"><div class="flex-grow pr-4"> <div class="skeleton-loader h-5 w-2/3 mb-2"></div> <div class="skeleton-loader h-4 w-1/2"></div> </div><div class="skeleton-loader h-8 w-24 rounded-full"></div></div>
+            `;
+            
+            // FIX: Fetch first, then sort in client to avoid needing a composite index.
+            const q = query(collection(db, "orders"), where("userId", "==", currentUser.uid));
+            
+            try {
+                const querySnapshot = await getDocs(q);
+                const orders = [];
+                querySnapshot.forEach(doc => orders.push(doc.data()));
+                
+                // Sort orders by timestamp descending
+                orders.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+
+                UI.historyContainer.innerHTML = ''; // Clear loader
+                if (orders.length === 0) {
+                    UI.historyContainer.innerHTML = `<p class="text-center text-gray-500 py-4">আপনি এখনো কোনো অর্ডার করেননি।</p>`;
+                } else {
+                    orders.forEach((order) => {
+                        const statusClasses = order.status === 'Pending' 
+                            ? 'bg-yellow-100 text-yellow-800' 
+                            : 'bg-green-100 text-green-800';
+                        const orderCard = document.createElement('div');
+                        orderCard.className = 'bg-green-50 p-4 rounded-xl border border-green-200 flex justify-between items-center';
+                        orderCard.innerHTML = `
+                            <div>
+                                <p class="font-bold">${order.product}</p>
+                                <p class="text-sm text-gray-600">তারিখ: ${new Date(order.timestamp.seconds * 1000).toLocaleDateString('bn-BD')}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-bold text-green-600 text-lg">৳ ${order.total}</p>
+                                <span class="font-semibold text-xs px-3 py-1 rounded-full ${statusClasses}">${order.status}</span>
+                            </div>
+                        `;
+                        UI.historyContainer.appendChild(orderCard);
+                    });
+                }
+            } catch (error) {
+                console.error("Error fetching history:", error);
+                UI.historyContainer.innerHTML = `<p class="text-center text-red-500 p-4 bg-red-50 rounded-lg">হিস্টোরি লোড করা যায়নি। অনুগ্রহ করে পরে চেষ্টা করুন।</p>`;
+            }
+        };
+
+        const renderTestimonials = async () => {
+            // FIX: Fetch first, then sort and limit in client to avoid needing a composite index.
+            const q = query(collection(db, "testimonials"), where("status", "==", "approved"));
+            try {
+                const querySnapshot = await getDocs(q);
+                const testimonials = [];
+                querySnapshot.forEach(doc => testimonials.push(doc.data()));
+
+                // Sort by timestamp descending and get the top 3
+                testimonials.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+                const limitedTestimonials = testimonials.slice(0, 3);
+
+                UI.testimonialsContainer.innerHTML = ''; // Clear skeletons
+                if (limitedTestimonials.length === 0) {
+                    UI.noTestimonials.style.display = 'block';
+                } else {
+                    UI.noTestimonials.style.display = 'none';
+                    limitedTestimonials.forEach((testimonial, index) => {
+                        const card = document.createElement('div');
+                        card.className = 'bg-white p-6 rounded-2xl shadow-lg transform hover:-translate-y-2 transition-transform duration-300';
+                        card.innerHTML = `
+                            <div class="flex items-center mb-4">
+                                <img src="${testimonial.authorPhoto}" alt="${testimonial.authorName}" class="w-14 h-14 rounded-full mr-4 border-2 border-amber-300">
+                                <div>
+                                    <p class="font-bold text-lg">${testimonial.authorName}</p>
+                                    <div class="text-amber-400 flex space-x-1"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 italic">"${testimonial.text}"</p>
+                        `;
+                        UI.testimonialsContainer.appendChild(card);
+                    });
+                }
+            } catch (error) {
+                console.error("Error fetching testimonials: ", error);
+                UI.testimonialsContainer.innerHTML = `
+                    <div class="col-span-1 md:col-span-3 text-center bg-red-100 text-red-700 p-6 rounded-lg">
+                        <p class="font-bold text-lg">একটি সমস্যা হয়েছে!</p>
+                        <p>মন্তব্যগুলো লোড করা যাচ্ছে না। অনুগ্রহ করে পরে আবার চেষ্টা করুন।</p>
+                    </div>
+                `;
+            }
+        };
+
+        // --- Tabbed Interface ---
+        const handleTabClick = (e) => {
+            const clickedTab = e.currentTarget;
+            const targetContentId = clickedTab.dataset.tab + 'Content';
+
+            UI.tabButtons.forEach(btn => {
+                btn.classList.remove('active-tab', 'border-amber-500', 'text-amber-600');
+                btn.classList.add('border-transparent', 'text-gray-500');
+            });
+            clickedTab.classList.add('active-tab', 'border-amber-500', 'text-amber-600');
+            clickedTab.classList.remove('border-transparent', 'text-gray-500');
+
+            UI.tabContents.forEach(content => {
+                content.style.display = content.id === targetContentId ? 'block' : 'none';
+            });
+        };
+
+        // --- Intersection Observer for Animations ---
+        const setupIntersectionObserver = () => {
+            const sections = document.querySelectorAll('.animated-section');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            sections.forEach(section => observer.observe(section));
+        };
+
+        // --- Initial Setup ---
+        const setupApp = () => {
+            // Event Listeners
+            onAuthStateChanged(auth, updateUIForAuthState);
+            UI.menuBtn.addEventListener('click', toggleMenu);
+            UI.closeMenuBtn.addEventListener('click', toggleMenu);
+            UI.sideMenuOverlay.addEventListener('click', toggleMenu);
+            UI.loginBtn.addEventListener('click', handleLogin);
+            UI.logoutBtn.addEventListener('click', handleLogout);
+            UI.orderForm.addEventListener('submit', handleOrderSubmit);
+            UI.reviewForm.addEventListener('submit', handleReviewSubmit);
+            UI.closeModal.addEventListener('click', () => UI.confirmationModal.style.display = 'none');
+            UI.printButton.addEventListener('click', () => window.print());
+            UI.orderRequiredFields.forEach(field => field.addEventListener('input', checkOrderFormValidity));
+            UI.tabButtons.forEach(btn => btn.addEventListener('click', handleTabClick));
+            UI.loginPromptButtons.forEach(btn => btn.addEventListener('click', handleLogin));
+
+            // Initial Data Load
+            checkOrderFormValidity();
+            renderTestimonials();
+            setupIntersectionObserver();
+        };
+
+        // Run the app
+        document.addEventListener('DOMContentLoaded', setupApp);
+
+    </script>
+</body>
+</html>
