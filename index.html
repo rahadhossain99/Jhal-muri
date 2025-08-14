@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>স্পেশাল ঝালমুড়ি মশলা - eFoodDokan</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font লোড করা হয়েছে -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -38,6 +37,14 @@
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
+        }
+        @keyframes slideInUp {
+            0% { opacity: 0; transform: translateY(50px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translate3d(0, 40px, 0); }
+            to { opacity: 1; transform: translate3d(0, 0, 0); }
         }
 
         /* বোতামের স্টাইল */
@@ -154,21 +161,45 @@
             </div>
         </section>
 
-        <!-- Comments & Reviews Section -->
+        <!-- Comments & Reviews Section (Static and Animated) -->
         <section id="commentsSection" class="animated-section">
             <h3 class="text-4xl font-extrabold text-center mb-10">ক্রেতাদের মতামত ও রিভিউ</h3>
-            <div id="comment-form-container" class="bg-white p-8 rounded-3xl shadow-xl mb-10 hidden">
-                <form id="comment-form" class="space-y-4">
-                    <h4 class="text-2xl font-bold mb-4">আপনার মন্তব্য জানান</h4>
-                    <textarea id="comment-text" rows="4" class="input-field w-full p-4 text-lg rounded-xl" placeholder="এখানে আপনার মূল্যবান মতামত লিখুন..." required></textarea>
-                    <button type="submit" class="w-full bg-amber-500 text-white py-3 rounded-full font-bold text-lg hover:bg-amber-600 transition-colors">
-                        <i class="fas fa-comment-dots mr-2"></i> মন্তব্য জমা দিন
-                    </button>
-                </form>
-            </div>
-            <div id="comments-container" class="space-y-6">
-                <!-- মন্তব্যগুলো এখানে লোড হবে -->
-                <p id="no-comments-message" class="text-center text-gray-500 text-lg">এখনো কোনো মন্তব্য নেই।</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Static Comment 1 -->
+                <div class="comment-card bg-white rounded-xl shadow-md p-6 border-l-4 border-amber-500 animate-[fadeInUp_0.5s_ease-out_forwards] transform-gpu">
+                    <div class="flex items-start space-x-4 mb-4">
+                        <img src="https://placehold.co/50x50/e2e8f0/334155?text=🧑" alt="User" class="w-12 h-12 rounded-full border-2 border-gray-200 flex-shrink-0">
+                        <div>
+                            <p class="font-bold text-xl">রেজাউল করিম</p>
+                            <p class="text-sm text-gray-500">২৯ জুলাই, ২০২৪</p>
+                        </div>
+                    </div>
+                    <p class="text-lg text-gray-700">মশলাটা খুবই ভালো! ঝালমুড়ি বানিয়ে দারুণ স্বাদ পেয়েছি। সবার খুব পছন্দ হয়েছে।</p>
+                </div>
+
+                <!-- Static Comment 2 -->
+                <div class="comment-card bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500 animate-[fadeInUp_0.5s_ease-out_0.2s_forwards] transform-gpu">
+                    <div class="flex items-start space-x-4 mb-4">
+                        <img src="https://placehold.co/50x50/e2e8f0/334155?text=🧑" alt="User" class="w-12 h-12 rounded-full border-2 border-gray-200 flex-shrink-0">
+                        <div>
+                            <p class="font-bold text-xl">সুমাইয়া আক্তার</p>
+                            <p class="text-sm text-gray-500">২৭ জুলাই, ২০২৪</p>
+                        </div>
+                    </div>
+                    <p class="text-lg text-gray-700">খুব দ্রুত ডেলিভারি পেয়েছি। মশলার গুণগত মান খুবই ভালো, কোনো ভেজাল নেই।</p>
+                </div>
+
+                <!-- Static Comment 3 -->
+                <div class="comment-card bg-white rounded-xl shadow-md p-6 border-l-4 border-red-500 animate-[fadeInUp_0.5s_ease-out_0.4s_forwards] transform-gpu">
+                    <div class="flex items-start space-x-4 mb-4">
+                        <img src="https://placehold.co/50x50/e2e8f0/334155?text=🧑" alt="User" class="w-12 h-12 rounded-full border-2 border-gray-200 flex-shrink-0">
+                        <div>
+                            <p class="font-bold text-xl">আরিফ হোসেন</p>
+                            <p class="text-sm text-gray-500">২৬ জুলাই, ২০২৪</p>
+                        </div>
+                    </div>
+                    <p class="text-lg text-gray-700">এই মশলাটা ব্যবহার করে একদম দোকানের মতো স্বাদ পেয়েছি। দারুন! আবার অর্ডার করব।</p>
+                </div>
             </div>
         </section>
 
@@ -302,17 +333,17 @@
         // Firebase SDKs আমদানি করা হচ্ছে
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, query, where, addDoc, onSnapshot, serverTimestamp, orderBy, updateDoc, doc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, query, where, addDoc, onSnapshot, serverTimestamp, updateDoc, doc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // আপনার Firebase কনফিগারেশন
+        // আপনার নতুন Firebase কনফিগারেশন
         const firebaseConfig = {
-            apiKey: "AIzaSyCTvWKR6pt8HrHoiDHo3wqoSXtXdXJjHHQ",
-            authDomain: "priya-ai-q14sj.firebaseapp.com",
-            projectId: "priya-ai-q14sj",
-            storageBucket: "priya-ai-q14sj.firebasestorage.app",
-            messagingSenderId: "113852032496",
-            appId: "1:113852032496:web:a6156f264323f54d9ae935",
-            measurementId: "G-4VFJ2W36XH"
+          apiKey: "AIzaSyBgsTWPPGzriNt8GfIT7FXeoMwLyh3ikmA",
+          authDomain: "jhal-muri-45900.firebaseapp.com",
+          projectId: "jhal-muri-45900",
+          storageBucket: "jhal-muri-45900.firebasestorage.app",
+          messagingSenderId: "552863012715",
+          appId: "1:552863012715:web:6429d774595b235cdc9e2e",
+          measurementId: "G-8T8VDW81PB"
         };
 
         // Firebase ইনিশিয়ালাইজ করা
@@ -345,11 +376,6 @@
         const couponMessageElem = document.getElementById('coupon-message');
         const couponDiscountRow = document.getElementById('coupon-discount-row');
         const couponDiscountElem = document.getElementById('coupon-discount');
-        const commentFormContainer = document.getElementById('comment-form-container');
-        const commentForm = document.getElementById('comment-form');
-        const commentTextarea = document.getElementById('comment-text');
-        const commentsContainer = document.getElementById('comments-container');
-        const noCommentsMessage = document.getElementById('no-comments-message');
         const customAlertModal = document.getElementById('custom-alert-modal');
         const alertTitle = document.getElementById('alert-title');
         const alertMessage = document.getElementById('alert-message');
@@ -462,16 +488,23 @@
             }
             
             try {
-                const q = query(collection(db, "orders"), where("userId", "==", userId), orderBy("timestamp", "desc"));
+                const q = query(collection(db, "orders"), where("userId", "==", userId));
                 onSnapshot(q, (querySnapshot) => {
                     historyContainer.innerHTML = '';
                     if (querySnapshot.empty) {
                         noHistoryMessage.style.display = 'block';
                     } else {
                         noHistoryMessage.style.display = 'none';
-                        querySnapshot.forEach((docSnapshot) => {
-                            const order = docSnapshot.data();
-                            const orderId = docSnapshot.id;
+
+                        const orders = [];
+                        querySnapshot.forEach((doc) => {
+                            orders.push({ id: doc.id, ...doc.data() });
+                        });
+
+                        orders.sort((a, b) => b.timestamp.seconds - a.timestamp.seconds);
+                        
+                        orders.forEach((order) => {
+                            const orderId = order.id;
                             const orderTime = order.timestamp.toDate();
                             const currentTime = new Date();
                             const canCancel = (currentTime - orderTime) < CANCEL_WINDOW_MS && order.status === 'Pending';
@@ -530,59 +563,80 @@
                 showAlert('ত্রুটি', 'অর্ডারের ইতিহাস লোড করতে ব্যর্থ। অনুগ্রহ করে এডমিনকে জানান।', false);
             }
         }
-        
-        // মন্তব্যগুলো Firestore থেকে লোড এবং রেন্ডার করার ফাংশন
-        function displayComments() {
-            commentsContainer.innerHTML = '';
-            noCommentsMessage.style.display = 'block';
 
-            try {
-                const q = query(collection(db, "comments"), where("status", "==", "Approved"), orderBy("timestamp", "desc"));
-                onSnapshot(q, (querySnapshot) => {
-                    commentsContainer.innerHTML = '';
-                    if (querySnapshot.empty) {
-                        noCommentsMessage.style.display = 'block';
-                    } else {
-                        noCommentsMessage.style.display = 'none';
-                        querySnapshot.forEach((docSnapshot) => {
-                            const comment = docSnapshot.data();
-                            const commentCard = document.createElement('div');
-                            commentCard.className = 'comment-card bg-white rounded-xl shadow-md p-6';
-                            
-                            let replyHtml = '';
-                            if (comment.adminReply) {
-                                replyHtml = `
-                                    <div class="admin-reply bg-gray-100 mt-4 p-4 rounded-xl border-l-4 border-green-500">
-                                        <p class="font-bold text-green-800">এডমিন: <i class="fas fa-user-shield ml-1"></i></p>
-                                        <p class="text-gray-700">${comment.adminReply}</p>
-                                    </div>
-                                `;
-                            }
+        //AuthState পরিবর্তন হলে এই ফাংশনটি কল হবে
+        function setupAuthAndListeners() {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUser = user;
+                    authUI.innerHTML = `
+                        <div class="user-profile relative group flex items-center gap-2 cursor-pointer transition-all duration-300">
+                            <img src="${user.photoURL || 'https://placehold.co/40x40/e2e8f0/334155?text=🧑'}" alt="${user.displayName}" class="w-10 h-10 rounded-full border-2 border-green-500">
+                            <span class="user-name font-semibold text-gray-800 hidden md:inline-block">${user.displayName.split(' ')[0]}</span>
+                            <div class="user-menu absolute hidden group-hover:block transition-all duration-300 w-48 bg-white rounded-xl shadow-lg p-2 z-50 animate-popIn">
+                                <p class="px-4 py-2 font-bold text-gray-800 border-b pb-2">স্বাগতম, ${user.displayName.split(' ')[0]}</p>
+                                <button id="signOutButton" class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors font-semibold mt-2">
+                                    <i class="fas fa-sign-out-alt mr-2"></i> লগআউট
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    document.getElementById('signOutButton').addEventListener('click', handleSignOut);
 
-                            commentCard.innerHTML = `
-                                <div class="flex items-start space-x-4 mb-4">
-                                    <img src="${comment.userPhotoURL || 'https://placehold.co/50x50/e2e8f0/334155?text=🧑'}" alt="${comment.userName}" class="w-12 h-12 rounded-full border-2 border-gray-200 flex-shrink-0">
-                                    <div>
-                                        <p class="font-bold text-xl">${comment.userName}</p>
-                                        <p class="text-sm text-gray-500">${new Date(comment.timestamp.seconds * 1000).toLocaleDateString('bn-BD')}</p>
-                                    </div>
-                                </div>
-                                <p class="text-lg text-gray-700">${comment.text}</p>
-                                ${replyHtml}
-                            `;
-                            commentsContainer.appendChild(commentCard);
-                        });
-                    }
-                }, (error) => {
-                    // Firebase Security Rules ত্রুটি হলে এই ব্লকটি চলবে
-                    console.error("Firestore Security Rules ত্রুটি: অনুগ্রহ করে আপনার Firebase Security Rules পরীক্ষা করুন।", error);
-                    showAlert('ত্রুটি', 'মন্তব্য লোড করতে ব্যর্থ। Firebase Security Rules পরীক্ষা করুন।', false);
-                });
-            } catch (error) {
-                console.error("Firestore Security Rules ত্রুটি: অনুগ্রহ করে আপনার Firebase Security Rules পরীক্ষা করুন।", error);
-                showAlert('ত্রুটি', 'মন্তব্য লোড করতে ব্যর্থ। অনুগ্রহ করে এডমিনকে জানান।', false);
-            }
+                    loginPrompt.textContent = "আপনার অর্ডারের ইতিহাস দেখতে নিচে স্ক্রল করুন।";
+                    loginPrompt.className = 'text-lg text-green-500 mt-2 font-semibold flex items-center justify-center';
+                    
+                    requiredFields.forEach(field => field.disabled = false);
+                    checkFormValidity();
+                    displayOrderHistory(user.uid);
+                } else {
+                    currentUser = null;
+                    authUI.innerHTML = `
+                        <button id="googleSignInButton" class="bg-blue-500 text-white py-2 px-4 rounded-full font-bold flex items-center space-x-2 shadow-lg hover:bg-blue-600 transition-colors">
+                            <i class="fab fa-google"></i>
+                            <span>Google দিয়ে লগইন করুন</span>
+                        </button>
+                    `;
+                    document.getElementById('googleSignInButton').addEventListener('click', signInWithGoogle);
+
+                    loginPrompt.innerHTML = `<i class="fas fa-exclamation-circle mr-2"></i> অর্ডার করার আগে অনুগ্রহ করে লগইন করুন।`;
+                    loginPrompt.className = 'text-lg text-red-500 mt-2 font-semibold flex items-center justify-center';
+                    
+                    requiredFields.forEach(field => field.disabled = true);
+                    submitButton.disabled = true;
+                    displayOrderHistory(null);
+                }
+            });
         }
+        
+        // ইভেন্ট লিসেনার সেট করা
+        document.addEventListener('DOMContentLoaded', function() {
+            setupAuthAndListeners();
+            orderForm.addEventListener('submit', handleFormSubmit);
+            requiredFields.forEach(field => field.addEventListener('input', checkFormValidity));
+            closeModal.addEventListener('click', () => confirmationModal.classList.add('hidden'));
+            printButton.addEventListener('click', () => window.print());
+            applyCouponBtn.addEventListener('click', applyCoupon);
+            alertOkButton.addEventListener('click', () => customAlertModal.classList.add('hidden'));
+            
+            decrementBtn.addEventListener('click', () => {
+                let currentQty = parseInt(quantityInput.value);
+                if (currentQty > 1) {
+                    quantityInput.value = currentQty - 1;
+                    calculateTotal();
+                }
+            });
+            incrementBtn.addEventListener('click', () => {
+                let currentQty = parseInt(quantityInput.value);
+                if (currentQty < 10) {
+                    quantityInput.value = currentQty + 1;
+                    calculateTotal();
+                }
+            });
+            
+            // Initial load
+            calculateTotal();
+        });
 
         // ফর্ম সাবমিট করার ফাংশন
         async function handleFormSubmit(e) {
@@ -633,113 +687,6 @@
                 showAlert('ব্যর্থ', 'অর্ডার জমা দিতে সমস্যা হয়েছে।', false);
             }
         }
-        
-        // মন্তব্য সাবমিট করার ফাংশন
-        async function handleCommentSubmit(e) {
-            e.preventDefault();
-            if (!currentUser) return;
-
-            const commentText = commentTextarea.value.trim();
-            if (!commentText) return;
-
-            const newComment = {
-                userId: currentUser.uid,
-                userName: currentUser.displayName,
-                userPhotoURL: currentUser.photoURL,
-                text: commentText,
-                timestamp: serverTimestamp(),
-                status: 'Pending',
-                adminReply: ''
-            };
-
-            try {
-                await addDoc(collection(db, "comments"), newComment);
-                commentTextarea.value = '';
-                showAlert('সফল!', 'আপনার মন্তব্য সফলভাবে জমা হয়েছে। এডমিন অ্যাপ্রুভ করলে তা দেখানো হবে।', true);
-            } catch (error) {
-                console.error("Error submitting comment:", error);
-                showAlert('ব্যর্থ', 'মন্তব্য জমা দিতে সমস্যা হয়েছে।', false);
-            }
-        }
-
-        //AuthState পরিবর্তন হলে এই ফাংশনটি কল হবে
-        function setupAuthAndListeners() {
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    currentUser = user;
-                    authUI.innerHTML = `
-                        <div class="user-profile relative group flex items-center gap-2 cursor-pointer transition-all duration-300">
-                            <img src="${user.photoURL || 'https://placehold.co/40x40/e2e8f0/334155?text=🧑'}" alt="${user.displayName}" class="w-10 h-10 rounded-full border-2 border-green-500">
-                            <span class="user-name font-semibold text-gray-800 hidden md:inline-block">${user.displayName.split(' ')[0]}</span>
-                            <div class="user-menu absolute hidden group-hover:block transition-all duration-300 w-48 bg-white rounded-xl shadow-lg p-2 z-50 animate-popIn">
-                                <p class="px-4 py-2 font-bold text-gray-800 border-b pb-2">স্বাগতম, ${user.displayName.split(' ')[0]}</p>
-                                <button id="signOutButton" class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors font-semibold mt-2">
-                                    <i class="fas fa-sign-out-alt mr-2"></i> লগআউট
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                    document.getElementById('signOutButton').addEventListener('click', handleSignOut);
-
-                    loginPrompt.textContent = "আপনার অর্ডারের ইতিহাস দেখতে নিচে স্ক্রল করুন।";
-                    loginPrompt.className = 'text-lg text-green-500 mt-2 font-semibold flex items-center justify-center';
-                    
-                    requiredFields.forEach(field => field.disabled = false);
-                    commentFormContainer.classList.remove('hidden');
-                    checkFormValidity();
-                    displayOrderHistory(user.uid);
-                } else {
-                    currentUser = null;
-                    authUI.innerHTML = `
-                        <button id="googleSignInButton" class="bg-blue-500 text-white py-2 px-4 rounded-full font-bold flex items-center space-x-2 shadow-lg hover:bg-blue-600 transition-colors">
-                            <i class="fab fa-google"></i>
-                            <span>Google দিয়ে লগইন করুন</span>
-                        </button>
-                    `;
-                    document.getElementById('googleSignInButton').addEventListener('click', signInWithGoogle);
-
-                    loginPrompt.innerHTML = `<i class="fas fa-exclamation-circle mr-2"></i> অর্ডার করার আগে অনুগ্রহ করে লগইন করুন।`;
-                    loginPrompt.className = 'text-lg text-red-500 mt-2 font-semibold flex items-center justify-center';
-                    
-                    requiredFields.forEach(field => field.disabled = true);
-                    submitButton.disabled = true;
-                    commentFormContainer.classList.add('hidden');
-                    displayOrderHistory(null);
-                }
-            });
-        }
-        
-        // ইভেন্ট লিসেনার সেট করা
-        document.addEventListener('DOMContentLoaded', function() {
-            // এই ফাংশনটি DOM লোড হওয়ার পর কল হবে
-            setupAuthAndListeners();
-            orderForm.addEventListener('submit', handleFormSubmit);
-            requiredFields.forEach(field => field.addEventListener('input', checkFormValidity));
-            closeModal.addEventListener('click', () => confirmationModal.classList.add('hidden'));
-            printButton.addEventListener('click', () => window.print());
-            commentForm.addEventListener('submit', handleCommentSubmit);
-            applyCouponBtn.addEventListener('click', applyCoupon);
-            alertOkButton.addEventListener('click', () => customAlertModal.classList.add('hidden'));
-            
-            decrementBtn.addEventListener('click', () => {
-                let currentQty = parseInt(quantityInput.value);
-                if (currentQty > 1) {
-                    quantityInput.value = currentQty - 1;
-                    calculateTotal();
-                }
-            });
-            incrementBtn.addEventListener('click', () => {
-                let currentQty = parseInt(quantityInput.value);
-                if (currentQty < 10) {
-                    quantityInput.value = currentQty + 1;
-                    calculateTotal();
-                }
-            });
-            
-            // Initial load
-            calculateTotal();
-            displayComments();
-        });
     </script>
 </body>
-</html>
+    </html>
