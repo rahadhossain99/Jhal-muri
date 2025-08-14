@@ -9,13 +9,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <style>
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideInUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from: { opacity: 0; } to: { opacity: 1; } }
+        @keyframes slideInUp { from: { opacity: 0; transform: translateY(50px); } to: { opacity: 1; transform: translateY(0); } }
         @keyframes popIn { 0% { transform: scale(0.6); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         @keyframes pulse-shadow {
             0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.8); }
@@ -74,26 +70,6 @@
             background: #ffffff;
             border-left: 5px solid #f59e0b;
         }
-        .google-btn {
-            background-color: #4285F4;
-            color: white;
-            transition: all 0.3s;
-        }
-        .google-btn:hover {
-            background-color: #357ABD;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(66, 133, 244, 0.4);
-        }
-        .user-avatar {
-            transition: all 0.3s;
-        }
-        .user-avatar:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.5);
-        }
-        .floating-badge {
-            animation: float 3s ease-in-out infinite;
-        }
         
         /* Print styles */
         @media print {
@@ -105,56 +81,69 @@
             }
             .no-print { display: none; }
         }
+        
+        /* New Styles for Login Button & User Profile */
+        .btn-google-login {
+            background-color: #4285F4;
+            color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        .btn-google-login:hover {
+            box-shadow: 4px 8px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
+        }
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .user-profile:hover .user-name {
+            color: #ef4444;
+        }
+        .user-menu {
+            top: 100%;
+            right: 0;
+            transform-origin: top right;
+            animation: popIn 0.3s ease-out forwards;
+        }
+        .comment-card {
+            background-color: #fff;
+            border-radius: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            padding: 1.5rem;
+        }
+        .admin-reply {
+            background-color: #f0fdf4;
+            border-left: 4px solid #10b981;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
     </style>
 </head>
 <body class="text-gray-800">
-
-    <!-- Login Modal -->
-    <div id="loginModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[1000]" style="display: none;">
-        <div class="modal-content w-11/12 max-w-md bg-white rounded-3xl shadow-2xl relative p-8">
-            <button id="closeLoginModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 text-2xl">&times;</button>
-            <div class="text-center">
-                <img src="https://i.postimg.cc/qRSXYFQJ/chalmuri-masla-800x800.webp" alt="লোগো" class="w-20 h-20 rounded-full border-4 border-amber-500 mx-auto mb-4">
-                <h2 class="text-3xl font-extrabold text-gray-800 mb-2">অর্ডার করতে লগইন করুন</h2>
-                <p class="text-gray-600 mb-6">আপনার অর্ডার হিস্টোরি সংরক্ষণ এবং একাধিক পণ্য অর্ডার করতে গুগল অ্যাকাউন্ট দিয়ে লগইন করুন</p>
-                
-                <button id="googleLoginBtn" class="google-btn py-3 px-6 rounded-full font-bold text-lg w-full flex items-center justify-center mb-4">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" class="w-6 h-6 mr-3 bg-white p-1 rounded-full">
-                    গুগল দিয়ে লগইন করুন
-                </button>
-                
-                <p class="text-sm text-gray-500">লগইন করে আপনি আমাদের <a href="#" class="text-amber-600">শর্তাবলী</a> এবং <a href="#" class="text-amber-600">গোপনীয়তা নীতি</a> মেনে নিচ্ছেন</p>
-            </div>
-        </div>
-    </div>
 
     <!-- Header -->
     <header class="bg-white/90 backdrop-blur-lg shadow-xl sticky top-0 z-50 rounded-b-3xl">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center py-4">
             <div class="flex items-center space-x-3">
-                <img src="https://i.postimg.cc/qRSXYFQJ/chalmuri-masla-800x800.webp" alt="লোগো" class="w-12 h-12 rounded-full border-2 border-amber-500">
-                <h1 class="text-3xl font-extrabold text-gray-800">eFoodDokan</h1>
+                <a href="#" id="home-link" class="flex items-center space-x-3">
+                    <img src="https://i.postimg.cc/qRSXYFQJ/chalmuri-masla-800x800.webp" alt="লোগো" class="w-12 h-12 rounded-full border-2 border-amber-500 animate-[float_3s_ease-in-out_infinite]">
+                    <h1 class="text-3xl font-extrabold text-gray-800">eFoodDokan</h1>
+                </a>
             </div>
             <div class="flex items-center space-x-4">
-                <div id="userProfile" class="hidden flex items-center space-x-2">
-                    <img id="userAvatar" src="https://placehold.co/40x40/e2e8f0/334155?text=?" class="rounded-full border-2 border-amber-400 cursor-pointer user-avatar">
-                    <span id="userName" class="font-medium hidden md:inline"></span>
-                    <button id="logoutBtn" class="text-red-500 hover:text-red-700 text-sm hidden md:inline" title="লগআউট">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </button>
-                </div>
-                <button id="loginBtn" class="bg-amber-500 hover:bg-amber-600 text-white py-2 px-4 rounded-full font-medium transition-colors">
-                    <i class="fas fa-user mr-2"></i> লগইন
-                </button>
-                <a href="#orderHistorySection" class="text-gray-600 hover:text-amber-600 transition-colors" title="অর্ডার হিস্টোরি">
+                <a href="#orderHistorySection" id="history-link" class="text-gray-600 hover:text-amber-600 transition-colors" title="অর্ডার হিস্টোরি">
                     <i class="fas fa-history fa-lg"></i>
                 </a>
                 <a href="#whyUsSection" class="text-gray-600 hover:text-amber-600 transition-colors hidden md:inline" title="কেন সেরা?">
                     <i class="fas fa-award fa-lg"></i>
                 </a>
-                <div class="flex items-center space-x-2 text-green-700 font-bold text-lg">
-                    <i class="fas fa-truck-fast fa-beat"></i>
-                    <span class="hidden md:inline">ফ্রি ডেলিভারি!</span>
+                <div id="auth-ui" class="relative">
+                    <!-- Auth UI will be rendered here by JS -->
                 </div>
             </div>
         </div>
@@ -164,20 +153,17 @@
 
         <!-- Hero Section -->
         <section class="text-center animated-section">
-            <div class="relative">
-                <span class="floating-badge bg-red-500 text-white text-sm font-bold py-1 px-3 rounded-full absolute -top-4 -right-4 transform rotate-12">বিশেষ ছাড়!</span>
-                <h2 class="text-4xl md:text-6xl font-extrabold text-gray-900 leading-tight">
-                    সেই চিরচেনা স্বাদ, এখন <span class="text-amber-600">আপনার রান্নাঘরে!</span>
-                </h2>
-            </div>
+            <h2 class="text-4xl md:text-6xl font-extrabold text-gray-900 leading-tight">
+                সেই চিরচেনা স্বাদ, এখন <span class="text-amber-600">আপনার রান্নাঘরে!</span>
+            </h2>
             <p class="mt-5 max-w-3xl mx-auto text-xl text-gray-600">
                 আমাদের হাতে তৈরি স্পেশাল গরুর কিমার ঝালমুড়ি মশলা দিয়ে ঘরেই উপভোগ করুন রাস্তার সেই পাগল করা স্বাদ। স্বাস্থ্যকর এবং কেমিক্যালমুক্ত, স্বাদে অতুলনীয়।
             </p>
             <div class="mt-10">
-                <button id="orderNowBtn" class="btn-order text-white py-4 px-12 rounded-full font-bold text-2xl inline-block">
+                <a href="#orderFormSection" class="btn-order text-white py-4 px-12 rounded-full font-bold text-2xl inline-block">
                     <i class="fas fa-shopping-basket fa-bounce mr-3"></i>
                     এখনই অর্ডার করুন
-                </button>
+                </a>
                 <p class="mt-5 text-3xl font-bold">বিশেষ ছাড়ে মাত্র <span class="text-green-600">৳১,১৯০</span> <del class="text-gray-400 text-xl">৳১,৫০০</del></p>
             </div>
             <img src="https://i.postimg.cc/rmKNfT1Z/Jhalmuri-Mosla.webp" alt="ঝালমুড়ি মশলার আকর্ষণীয় ছবি" class="mt-10 rounded-3xl shadow-2xl w-full max-w-4xl mx-auto transform hover:scale-105 transition-transform duration-500">
@@ -230,71 +216,75 @@
             </div>
         </section>
 
-        <!-- Testimonial Section -->
-        <section class="animated-section">
-             <h3 class="text-4xl font-extrabold text-center mb-10">আমাদের ক্রেতারা যা বলছেন</h3>
-             <div class="testimonial-card p-8 rounded-2xl shadow-lg">
-                 <div class="flex items-center mb-4">
-                     <img src="https://placehold.co/60x60/e2e8f0/334155?text=🧑" class="rounded-full mr-4 border-2 border-amber-300">
-                     <div>
-                         <p class="font-bold text-xl text-gray-800">আব্দুল করিম</p>
-                         <p class="text-sm text-gray-500">ঢাকা, বাংলাদেশ</p>
-                     </div>
-                     <div class="ml-auto text-amber-400 flex space-x-1 text-2xl">
-                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                     </div>
-                 </div>
-                 <p class="text-gray-700 text-lg italic">"সত্যি বলতে, আমি ভাবতেও পারিনি ঘরে বানানো ঝালমুড়ি এত মজার হতে পারে। মশলাটা অসাধারণ! ফ্লেভারটা একদম পারফেক্ট। ধন্যবাদ eFoodDokan!"</p>
-             </div>
-        </section>
-
-        <!-- Image Gallery -->
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center animated-section">
-            <img src="https://i.postimg.cc/brnHjRFQ/chalmuri-masla01-800x800.webp" alt="ঝালমুড়ি মশলার উপাদান" class="rounded-3xl shadow-xl w-full h-full object-cover transform hover:scale-105 transition-transform duration-300">
-            <img src="https://i.postimg.cc/Y2Lxgpqh/Jhalmuri-Mosla1.webp" alt="তৈরি করা ঝালমুড়ির ছবি" class="rounded-3xl shadow-xl w-full h-full object-cover transform hover:scale-105 transition-transform duration-300">
+        <!-- Comments & Reviews Section -->
+        <section id="commentsSection" class="animated-section">
+            <h3 class="text-4xl font-extrabold text-center mb-10">ক্রেতাদের মতামত ও রিভিউ</h3>
+            <div id="comment-form-container" class="bg-white p-8 rounded-3xl shadow-xl mb-10 hidden">
+                <form id="comment-form" class="space-y-4">
+                    <h4 class="text-2xl font-bold mb-4">আপনার মন্তব্য জানান</h4>
+                    <textarea id="comment-text" rows="4" class="input-field w-full p-4 text-lg rounded-xl" placeholder="এখানে আপনার মূল্যবান মতামত লিখুন..." required></textarea>
+                    <button type="submit" class="w-full bg-amber-500 text-white py-3 rounded-full font-bold text-lg hover:bg-amber-600 transition-colors">
+                        <i class="fas fa-comment-dots mr-2"></i> মন্তব্য জমা দিন
+                    </button>
+                </form>
+            </div>
+            <div id="comments-container" class="space-y-6">
+                <!-- Comments will be loaded here -->
+                <p id="no-comments-message" class="text-center text-gray-500 text-lg">এখনো কোনো মন্তব্য নেই।</p>
+            </div>
         </section>
 
         <!-- Order Form Section -->
-        <section id="orderFormSection" class="bg-white p-8 md:p-12 rounded-3xl shadow-2xl animated-section" style="display: none;">
+        <section id="orderFormSection" class="bg-white p-8 md:p-12 rounded-3xl shadow-2xl animated-section">
             <div class="text-center mb-10">
                 <h3 class="text-4xl font-extrabold">অর্ডার করতে ফর্মটি পূরণ করুন</h3>
-                <p class="text-lg text-gray-600 mt-2">আপনার দেওয়া তথ্যের ভিত্তিতে আমরা দ্রুত আপনার সাথে যোগাযোগ করব।</p>
+                <p id="login-prompt" class="text-lg text-red-500 mt-2 font-semibold flex items-center justify-center">
+                    <i class="fas fa-exclamation-circle mr-2"></i> অর্ডার করার আগে অনুগ্রহ করে লগইন করুন।
+                </p>
             </div>
             <form id="orderForm" class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
                 <div class="space-y-6">
                     <div>
                         <label for="name" class="block text-lg font-semibold text-gray-700 mb-2"><i class="fas fa-user mr-2 text-amber-600"></i>আপনার সম্পূর্ণ নাম *</label>
-                        <input type="text" id="name" required class="input-field w-full p-4 text-lg rounded-xl" placeholder="নাম লিখুন">
+                        <input type="text" id="name" required class="input-field w-full p-4 text-lg rounded-xl" placeholder="নাম লিখুন" disabled>
                     </div>
                     <div>
                         <label for="phone" class="block text-lg font-semibold text-gray-700 mb-2"><i class="fas fa-phone-alt mr-2 text-amber-600"></i>মোবাইল নাম্বার *</label>
-                        <input type="tel" id="phone" required class="input-field w-full p-4 text-lg rounded-xl" placeholder="সচল মোবাইল নাম্বার দিন">
+                        <input type="tel" id="phone" required class="input-field w-full p-4 text-lg rounded-xl" placeholder="সচল মোবাইল নাম্বার দিন" disabled>
                     </div>
                     <div>
                         <label for="address" class="block text-lg font-semibold text-gray-700 mb-2"><i class="fas fa-map-marker-alt mr-2 text-amber-600"></i>সম্পূর্ণ ঠিকানা *</label>
-                        <textarea id="address" rows="4" required class="input-field w-full p-4 text-lg rounded-xl" placeholder="বাসা/হোল্ডিং, রোড, এলাকা, থানা ও জেলা"></textarea>
-                    </div>
-                    <div>
-                        <label for="quantity" class="block text-lg font-semibold text-gray-700 mb-2"><i class="fas fa-boxes-packing mr-2 text-amber-600"></i>পরিমাণ *</label>
-                        <select id="quantity" class="input-field w-full p-4 text-lg rounded-xl">
-                            <option value="1">১ কেজি (৳১,১৯০)</option>
-                            <option value="2">২ কেজি (৳২,২০০)</option>
-                            <option value="3">৩ কেজি (৳৩,২০০)</option>
-                            <option value="5">৫ কেজি (৳৫,০০০)</option>
-                        </select>
+                        <textarea id="address" rows="4" required class="input-field w-full p-4 text-lg rounded-xl" placeholder="বাসা/হোল্ডিং, রোড, এলাকা, থানা ও জেলা" disabled></textarea>
                     </div>
                 </div>
                 <div class="bg-green-50 p-6 rounded-2xl border-2 border-green-200 sticky top-28">
                     <h4 class="text-2xl font-bold mb-5 text-center border-b-2 pb-3">অর্ডার সামারি</h4>
                     <div class="space-y-4 text-lg">
-                        <div class="flex justify-between"><span>প্রোডাক্ট:</span> <span class="font-bold">স্পেশাল ঝালমুড়ি মশলা (<span id="summaryQuantity">১</span> কেজি)</span></div>
+                        <div class="flex justify-between"><span>প্রোডাক্ট:</span> <span class="font-bold">স্পেশাল ঝালমুড়ি মশলা (১ কেজি)</span></div>
+                        <div class="flex items-center justify-between">
+                            <span class="mr-2">পরিমাণ:</span>
+                            <div class="flex items-center">
+                                <button type="button" id="decrement-btn" class="bg-gray-300 text-gray-800 px-3 py-1 rounded-full text-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed">-</button>
+                                <input type="number" id="quantity" value="1" min="1" max="10" class="w-16 text-center mx-2 text-xl font-bold rounded-lg border-2 border-green-200" readonly>
+                                <button type="button" id="increment-btn" class="bg-gray-300 text-gray-800 px-3 py-1 rounded-full text-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed">+</button>
+                            </div>
+                        </div>
+                        <div class="flex justify-between"><span>পণ্যের মূল্য:</span> <span id="product-price" class="font-bold">৳১,১৯০</span></div>
                         <div class="flex justify-between"><span>ডেলিভারি চার্জ:</span> <span class="font-bold text-green-600">ফ্রি</span></div>
+                        <div id="coupon-discount-row" class="hidden flex justify-between text-red-500">
+                            <span>কুপন ডিসকাউন্ট:</span> <span id="coupon-discount" class="font-bold">-৳০</span>
+                        </div>
                         <hr>
                         <div class="flex justify-between items-center text-3xl font-extrabold">
                             <span>সর্বমোট:</span>
-                            <span class="text-green-600">৳<span id="summaryTotal">১,১৯০</span></span>
+                            <span id="total-price" class="text-green-600">৳১,১৯০</span>
                         </div>
                     </div>
+                    <div class="mt-6 flex items-center space-x-2">
+                        <input type="text" id="coupon-code-input" class="input-field flex-1 p-3 rounded-xl text-lg" placeholder="কুপন কোড লিখুন">
+                        <button type="button" id="apply-coupon-btn" class="bg-amber-500 text-white px-6 py-3 rounded-full font-bold text-lg hover:bg-amber-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">প্রয়োগ</button>
+                    </div>
+                    <p id="coupon-message" class="text-center mt-2 text-sm text-gray-600"></p>
                     <div class="mt-6 bg-green-100 p-4 rounded-lg text-green-800 font-semibold text-center">
                         <i class="fas fa-money-bill-wave mr-2"></i>
                         ক্যাশ অন ডেলিভারি (পণ্য হাতে পেয়ে টাকা দিন)
@@ -309,29 +299,16 @@
             </form>
         </section>
 
-        <!-- Login Prompt for Order -->
-        <section id="loginPromptSection" class="bg-white p-8 md:p-12 rounded-3xl shadow-2xl animated-section text-center">
-            <div class="max-w-2xl mx-auto">
-                <i class="fas fa-lock text-6xl text-amber-500 mb-6"></i>
-                <h3 class="text-3xl font-extrabold mb-4">অর্ডার করতে লগইন করুন</h3>
-                <p class="text-lg text-gray-600 mb-8">আপনার অর্ডার হিস্টোরি সংরক্ষণ এবং একাধিক পণ্য অর্ডার করতে গুগল অ্যাকাউন্ট দিয়ে লগইন করুন</p>
-                <button id="loginPromptBtn" class="google-btn py-3 px-8 rounded-full font-bold text-lg inline-flex items-center">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" class="w-6 h-6 mr-3 bg-white p-1 rounded-full">
-                    গুগল দিয়ে লগইন করুন
-                </button>
-            </div>
-        </section>
-
         <!-- Order History Section -->
         <section id="orderHistorySection" class="bg-white p-8 md:p-12 rounded-3xl shadow-2xl animated-section">
             <h3 class="text-4xl font-extrabold text-center mb-10">আপনার পূর্ববর্তী অর্ডারসমূহ</h3>
             <div id="historyContainer" class="space-y-4 max-h-96 overflow-y-auto pr-2">
-                <p id="noHistoryMessage" class="text-center text-gray-500 text-lg">এখানে আপনার কোনো অর্ডার পাওয়া যায়নি।</p>
+                <p id="noHistoryMessage" class="text-center text-gray-500 text-lg">লগইন করলে এখানে আপনার অর্ডারের ইতিহাস দেখতে পারবেন।</p>
             </div>
         </section>
 
     </main>
-    
+
     <!-- Footer -->
     <footer class="bg-gray-800 text-white pt-12 pb-8">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -358,292 +335,413 @@
                     <p><strong>নাম:</strong> <span id="confName"></span></p>
                     <p><strong>ফোন:</strong> <span id="confPhone"></span></p>
                     <p><strong>ঠিকানা:</strong> <span id="confAddress"></span></p>
-                    <p><strong>পরিমাণ:</strong> <span id="confQuantity"></span></p>
                     <p><strong>তারিখ:</strong> <span id="confDate"></span></p>
+                    <p><strong>পরিমাণ:</strong> <span id="confQuantity"></span></p>
                     <hr class="my-3">
-                    <p class="text-xl font-bold"><strong>সর্বমোট বিল:</strong> <span id="confTotal" class="text-green-600">৳ ১,১৯০</span></p>
+                    <p class="text-xl font-bold"><strong>সর্বমোট বিল:</strong> <span id="confTotal" class="text-green-600"></span></p>
                 </div>
                 <div class="mt-8 text-center no-print">
                     <button id="printButton" class="bg-gray-800 text-white py-3 px-8 rounded-full font-bold text-lg hover:bg-gray-900 transform hover:scale-105 transition-all">
                         <i class="fas fa-print mr-2"></i> প্রিন্ট করুন
-                    </button>
-                    <button id="newOrderButton" class="bg-amber-500 text-white py-3 px-8 rounded-full font-bold text-lg hover:bg-amber-600 transform hover:scale-105 transition-all ml-4">
-                        <i class="fas fa-plus mr-2"></i> নতুন অর্ডার
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        // Firebase configuration
+    <script type="module">
+        // Firebase SDKs আমদানি করা হচ্ছে
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, query, where, addDoc, onSnapshot, serverTimestamp, orderBy, updateDoc, doc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // আপনার দেওয়া Firebase কনফিগারেশন
         const firebaseConfig = {
             apiKey: "AIzaSyCTvWKR6pt8HrHoiDHo3wqoSXtXdXJjHHQ",
             authDomain: "priya-ai-q14sj.firebaseapp.com",
             projectId: "priya-ai-q14sj",
-            storageBucket: "priya-ai-q14sj.appspot.com",
+            storageBucket: "priya-ai-q14sj.firebasestorage.app",
             messagingSenderId: "113852032496",
             appId: "1:113852032496:web:a6156f264323f54d9ae935",
             measurementId: "G-4VFJ2W36XH"
         };
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+        // Firebase ইনিশিয়ালাইজ করা
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // DOM Elements
-            const orderForm = document.getElementById('orderForm');
-            const submitButton = document.getElementById('submitButton');
-            const requiredFields = Array.from(orderForm.querySelectorAll('[required]'));
-            const confirmationModal = document.getElementById('confirmationModal');
-            const closeModal = document.getElementById('closeModal');
-            const printButton = document.getElementById('printButton');
-            const newOrderButton = document.getElementById('newOrderButton');
-            const historyContainer = document.getElementById('historyContainer');
-            const noHistoryMessage = document.getElementById('noHistoryMessage');
-            const loginModal = document.getElementById('loginModal');
-            const closeLoginModal = document.getElementById('closeLoginModal');
-            const googleLoginBtn = document.getElementById('googleLoginBtn');
-            const loginBtn = document.getElementById('loginBtn');
-            const logoutBtn = document.getElementById('logoutBtn');
-            const userProfile = document.getElementById('userProfile');
-            const userAvatar = document.getElementById('userAvatar');
-            const userName = document.getElementById('userName');
-            const orderNowBtn = document.getElementById('orderNowBtn');
-            const loginPromptBtn = document.getElementById('loginPromptBtn');
-            const orderFormSection = document.getElementById('orderFormSection');
-            const loginPromptSection = document.getElementById('loginPromptSection');
-            const quantitySelect = document.getElementById('quantity');
-            const summaryQuantity = document.getElementById('summaryQuantity');
-            const summaryTotal = document.getElementById('summaryTotal');
+        // UI উপাদানগুলো নির্বাচন করা
+        const orderForm = document.getElementById('orderForm');
+        const submitButton = document.getElementById('submitButton');
+        const requiredFields = Array.from(orderForm.querySelectorAll('[required]'));
+        const loginPrompt = document.getElementById('login-prompt');
+        const authUI = document.getElementById('auth-ui');
+        const confirmationModal = document.getElementById('confirmationModal');
+        const closeModal = document.getElementById('closeModal');
+        const printButton = document.getElementById('printButton');
+        const historyContainer = document.getElementById('historyContainer');
+        const noHistoryMessage = document.getElementById('noHistoryMessage');
+        const nameInput = document.getElementById('name');
+        const phoneInput = document.getElementById('phone');
+        const addressInput = document.getElementById('address');
+        const quantityInput = document.getElementById('quantity');
+        const decrementBtn = document.getElementById('decrement-btn');
+        const incrementBtn = document.getElementById('increment-btn');
+        const productPriceElem = document.getElementById('product-price');
+        const totalPriceElem = document.getElementById('total-price');
+        const couponCodeInput = document.getElementById('coupon-code-input');
+        const applyCouponBtn = document.getElementById('apply-coupon-btn');
+        const couponMessageElem = document.getElementById('coupon-message');
+        const couponDiscountRow = document.getElementById('coupon-discount-row');
+        const couponDiscountElem = document.getElementById('coupon-discount');
+        const commentFormContainer = document.getElementById('comment-form-container');
+        const commentForm = document.getElementById('comment-form');
+        const commentTextarea = document.getElementById('comment-text');
+        const commentsContainer = document.getElementById('comments-container');
+        const noCommentsMessage = document.getElementById('no-comments-message');
+        
+        let currentUser = null;
+        let couponDiscount = 0;
+        const BASE_PRICE = 1190;
+        const CANCEL_WINDOW_MS = 10 * 60 * 1000; // 10 মিনিট
+
+        // Google লগইন ফাংশন
+        async function signInWithGoogle() {
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                console.error("Google লগইন ব্যর্থ হয়েছে: ", error);
+            }
+        }
+        
+        // Google লগআউট ফাংশন
+        async function handleSignOut() {
+            try {
+                await signOut(auth);
+                console.log("সফলভাবে লগআউট হয়েছে");
+            } catch (error) {
+                console.error("লগআউট ব্যর্থ হয়েছে:", error);
+            }
+        }
+
+        // মোট দাম গণনা করার ফাংশন
+        function calculateTotal() {
+            const quantity = parseInt(quantityInput.value);
+            const currentPrice = BASE_PRICE * quantity;
+            productPriceElem.textContent = `৳${currentPrice.toLocaleString('bn-BD')}`;
+            const finalPrice = currentPrice - couponDiscount;
+            totalPriceElem.textContent = `৳${finalPrice.toLocaleString('bn-BD')}`;
+        }
+
+        // কুপন প্রয়োগ করার ফাংশন
+        async function applyCoupon() {
+            const couponCode = couponCodeInput.value.trim();
+            if (!couponCode) {
+                couponMessageElem.textContent = "অনুগ্রহ করে একটি কুপন কোড লিখুন।";
+                return;
+            }
+
+            try {
+                const q = query(collection(db, "coupons"), where("code", "==", couponCode));
+                const querySnapshot = await getDocs(q);
+                
+                if (!querySnapshot.empty) {
+                    const couponData = querySnapshot.docs[0].data();
+                    const discountValue = couponData.discount;
+                    couponDiscount = discountValue;
+                    couponDiscountRow.classList.remove('hidden');
+                    couponDiscountElem.textContent = `-৳${couponDiscount.toLocaleString('bn-BD')}`;
+                    couponMessageElem.textContent = `কুপন সফলভাবে প্রয়োগ করা হয়েছে! আপনি ৳${discountValue.toLocaleString('bn-BD')} ছাড় পেয়েছেন।`;
+                    couponMessageElem.classList.remove('text-red-500');
+                    couponMessageElem.classList.add('text-green-500');
+                    calculateTotal();
+                } else {
+                    couponDiscount = 0;
+                    couponDiscountRow.classList.add('hidden');
+                    couponMessageElem.textContent = "ভুল কুপন কোড।";
+                    couponMessageElem.classList.remove('text-green-500');
+                    couponMessageElem.classList.add('text-red-500');
+                    calculateTotal();
+                }
+            } catch (error) {
+                console.error("Error applying coupon:", error);
+                couponMessageElem.textContent = "কুপন প্রয়োগ করতে ব্যর্থ হয়েছে।";
+                couponMessageElem.classList.remove('text-green-500');
+                couponMessageElem.classList.add('text-red-500');
+            }
+        }
+
+        // ফর্মের বৈধতা পরীক্ষা করার জন্য ফাংশন
+        function checkFormValidity() {
+            const allValid = requiredFields.every(field => field.value.trim() !== '');
+            submitButton.disabled = !allValid || !currentUser;
+        }
+
+        // অর্ডারের ইতিহাস Firestore থেকে লোড এবং রেন্ডার করার জন্য ফাংশন
+        function displayOrderHistory(userId) {
+            historyContainer.innerHTML = '';
+            noHistoryMessage.style.display = 'block';
+
+            if (!userId) {
+                return;
+            }
             
-            // Price mapping
-            const prices = {
-                '1': { quantity: '১ কেজি', price: '১,১৯০' },
-                '2': { quantity: '২ কেজি', price: '২,২০০' },
-                '3': { quantity: '৩ কেজি', price: '৩,২০০' },
-                '5': { quantity: '৫ কেজি', price: '৫,০০০' }
+            const q = query(collection(db, "orders"), where("userId", "==", userId), orderBy("timestamp", "desc"));
+            onSnapshot(q, (querySnapshot) => {
+                historyContainer.innerHTML = '';
+                if (querySnapshot.empty) {
+                    noHistoryMessage.style.display = 'block';
+                } else {
+                    noHistoryMessage.style.display = 'none';
+                    querySnapshot.forEach((docSnapshot) => {
+                        const order = docSnapshot.data();
+                        const orderId = docSnapshot.id;
+                        const orderTime = order.timestamp.toDate();
+                        const currentTime = new Date();
+                        const canCancel = (currentTime - orderTime) < CANCEL_WINDOW_MS && order.status === 'Pending';
+                        
+                        let statusColor = '';
+                        let statusText = '';
+                        if (order.status === 'Pending') {
+                            statusColor = 'bg-amber-500';
+                            statusText = 'প্রক্রিয়াধীন';
+                        } else if (order.status === 'Approved') {
+                            statusColor = 'bg-green-500';
+                            statusText = 'নিশ্চিত';
+                        } else if (order.status === 'Cancelled') {
+                            statusColor = 'bg-red-500';
+                            statusText = 'বাতিলকৃত';
+                        }
+
+                        orderCard.className = 'bg-green-50 p-4 rounded-xl border border-green-200 flex justify-between items-center transform hover:scale-[1.01] transition-transform duration-300';
+                        orderCard.innerHTML = `
+                            <div>
+                                <p class="font-bold">অর্ডার আইডি: ${order.id}</p>
+                                <p class="text-sm text-gray-600">তারিখ: ${orderTime.toLocaleDateString('bn-BD')} - পরিমাণ: ${order.quantity}</p>
+                                <span class="text-xs font-bold text-white px-2 py-1 rounded-full ${statusColor}">${statusText}</span>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <p class="font-bold text-green-600 text-lg">৳ ${order.totalPrice.toLocaleString('bn-BD')}</p>
+                                ${canCancel ? `<button data-id="${orderId}" class="cancel-btn bg-red-500 text-white px-3 py-1 rounded-full font-bold text-sm hover:bg-red-600 transition-colors">বাতিল করুন</button>` : ''}
+                            </div>
+                        `;
+                        historyContainer.appendChild(orderCard);
+                    });
+
+                    // ক্যানসেল বাটনের জন্য ইভেন্ট লিসেনার
+                    document.querySelectorAll('.cancel-btn').forEach(button => {
+                        button.addEventListener('click', async (e) => {
+                            const orderToCancelId = e.target.dataset.id;
+                            try {
+                                const orderRef = doc(db, "orders", orderToCancelId);
+                                await updateDoc(orderRef, { status: 'Cancelled' });
+                                console.log("Order cancelled successfully!");
+                            } catch (error) {
+                                console.error("Error cancelling order:", error);
+                            }
+                        });
+                    });
+                }
+            });
+        }
+        
+        // মন্তব্যগুলো Firestore থেকে লোড এবং রেন্ডার করার ফাংশন
+        function displayComments() {
+            commentsContainer.innerHTML = '';
+            noCommentsMessage.style.display = 'block';
+
+            const q = query(collection(db, "comments"), where("status", "==", "Approved"), orderBy("timestamp", "desc"));
+            onSnapshot(q, (querySnapshot) => {
+                commentsContainer.innerHTML = '';
+                if (querySnapshot.empty) {
+                    noCommentsMessage.style.display = 'block';
+                } else {
+                    noCommentsMessage.style.display = 'none';
+                    querySnapshot.forEach((docSnapshot) => {
+                        const comment = docSnapshot.data();
+                        const commentCard = document.createElement('div');
+                        commentCard.className = 'comment-card';
+                        
+                        let replyHtml = '';
+                        if (comment.adminReply) {
+                            replyHtml = `
+                                <div class="admin-reply">
+                                    <p class="font-bold text-green-800">এডমিন: <i class="fas fa-user-shield ml-1"></i></p>
+                                    <p class="text-gray-700">${comment.adminReply}</p>
+                                </div>
+                            `;
+                        }
+
+                        commentCard.innerHTML = `
+                            <div class="flex items-center space-x-4 mb-4">
+                                <img src="${comment.userPhotoURL || 'https://placehold.co/50x50/e2e8f0/334155?text=🧑'}" alt="${comment.userName}" class="w-12 h-12 rounded-full">
+                                <div>
+                                    <p class="font-bold text-xl">${comment.userName}</p>
+                                    <p class="text-sm text-gray-500">${new Date(comment.timestamp.seconds * 1000).toLocaleDateString('bn-BD')}</p>
+                                </div>
+                            </div>
+                            <p class="text-lg text-gray-700">${comment.text}</p>
+                            ${replyHtml}
+                        `;
+                        commentsContainer.appendChild(commentCard);
+                    });
+                }
+            });
+        }
+
+        // ফর্ম সাবমিট করার ফাংশন
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            if (submitButton.disabled || !currentUser) return;
+
+            const name = nameInput.value;
+            const phone = phoneInput.value;
+            const address = addressInput.value;
+            const quantity = parseInt(quantityInput.value);
+            const totalPrice = parseInt(totalPriceElem.textContent.replace('৳', '').replace(/,/g, ''));
+            
+            const newOrder = {
+                id: `JM-${Date.now().toString().slice(-6)}`,
+                userId: currentUser.uid,
+                userName: name,
+                userPhone: phone,
+                userAddress: address,
+                timestamp: serverTimestamp(),
+                quantity: quantity,
+                totalPrice: totalPrice,
+                status: 'Pending'
             };
 
-            // Quantity change handler
-            quantitySelect.addEventListener('change', function() {
-                const selectedValue = this.value;
-                summaryQuantity.textContent = selectedValue;
-                summaryTotal.textContent = prices[selectedValue].price;
-            });
-
-            // Check form validity
-            function checkFormValidity() {
-                const allValid = requiredFields.every(field => field.value.trim() !== '');
-                submitButton.disabled = !allValid;
-            }
-
-            // Display order history from Firestore
-            function displayOrderHistory(userId) {
-                historyContainer.innerHTML = ''; // Clear previous history
-
-                db.collection('orders').where('userId', '==', userId).orderBy('timestamp', 'desc')
-                    .get()
-                    .then((querySnapshot) => {
-                        if (querySnapshot.empty) {
-                            historyContainer.appendChild(noHistoryMessage);
-                            noHistoryMessage.style.display = 'block';
-                        } else {
-                            noHistoryMessage.style.display = 'none';
-                            querySnapshot.forEach((doc) => {
-                                const order = doc.data();
-                                const orderCard = document.createElement('div');
-                                orderCard.className = 'bg-green-50 p-4 rounded-xl border border-green-200 flex justify-between items-center hover:bg-green-100 transition-colors cursor-pointer';
-                                orderCard.innerHTML = `
-                                    <div>
-                                        <p class="font-bold">অর্ডার আইডি: ${order.orderId}</p>
-                                        <p class="text-sm text-gray-600">তারিখ: ${order.date}</p>
-                                    </div>
-                                    <p class="font-bold text-green-600 text-lg">৳ ${order.total}</p>
-                                `;
-                                orderCard.addEventListener('click', () => showOrderDetails(order));
-                                historyContainer.appendChild(orderCard);
-                            });
-                        }
-                    })
-                    .catch((error) => {
-                        console.error("Error getting orders: ", error);
-                        historyContainer.appendChild(noHistoryMessage);
-                        noHistoryMessage.style.display = 'block';
-                    });
-            }
-
-            // Show order details in modal
-            function showOrderDetails(order) {
-                document.getElementById('confOrderId').textContent = order.orderId;
-                document.getElementById('confName').textContent = order.name;
-                document.getElementById('confPhone').textContent = order.phone;
-                document.getElementById('confAddress').textContent = order.address;
-                document.getElementById('confQuantity').textContent = order.quantity;
-                document.getElementById('confDate').textContent = `${order.date}, ${order.time}`;
-                document.getElementById('confTotal').textContent = `৳ ${order.total}`;
+            try {
+                await addDoc(collection(db, "orders"), newOrder);
+                console.log("অর্ডার সফলভাবে যোগ করা হয়েছে!");
+                
+                const orderDate = new Date();
+                document.getElementById('confOrderId').textContent = newOrder.id;
+                document.getElementById('confName').textContent = name;
+                document.getElementById('confPhone').textContent = phone;
+                document.getElementById('confAddress').textContent = address;
+                document.getElementById('confDate').textContent = `${orderDate.toLocaleDateString('bn-BD')}, ${orderDate.toLocaleTimeString('bn-BD')}`;
+                document.getElementById('confQuantity').textContent = quantity;
+                document.getElementById('confTotal').textContent = `৳ ${totalPrice.toLocaleString('bn-BD')}`;
                 
                 confirmationModal.style.display = 'flex';
-            }
-
-            // Handle form submission
-            function handleFormSubmit(e) {
-                e.preventDefault();
-                if (submitButton.disabled) return;
-
-                const name = document.getElementById('name').value;
-                const phone = document.getElementById('phone').value;
-                const address = document.getElementById('address').value;
-                const quantity = quantitySelect.value;
-                const quantityText = prices[quantity].quantity;
-                const totalPrice = prices[quantity].price;
-                const orderDate = new Date();
-                const user = auth.currentUser;
                 
-                const newOrder = {
-                    orderId: `JM-${Date.now().toString().slice(-6)}`,
-                    userId: user.uid,
-                    name: name,
-                    phone: phone,
-                    address: address,
-                    quantity: quantityText,
-                    date: orderDate.toLocaleDateString('bn-BD'),
-                    time: orderDate.toLocaleTimeString('bn-BD'),
-                    total: totalPrice,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                };
-
-                // Save to Firestore
-                db.collection('orders').add(newOrder)
-                    .then(() => {
-                        // Display Confirmation
-                        document.getElementById('confOrderId').textContent = newOrder.orderId;
-                        document.getElementById('confName').textContent = newOrder.name;
-                        document.getElementById('confPhone').textContent = newOrder.phone;
-                        document.getElementById('confAddress').textContent = newOrder.address;
-                        document.getElementById('confQuantity').textContent = newOrder.quantity;
-                        document.getElementById('confDate').textContent = `${newOrder.date}, ${newOrder.time}`;
-                        document.getElementById('confTotal').textContent = `৳ ${newOrder.total}`;
-                        
-                        confirmationModal.style.display = 'flex';
-                        
-                        // Reset form and update history
-                        orderForm.reset();
-                        checkFormValidity();
-                        displayOrderHistory(user.uid);
-                    })
-                    .catch((error) => {
-                        console.error("Error adding order: ", error);
-                        alert("অর্ডার সাবমিট করতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।");
-                    });
+                orderForm.reset();
+                quantityInput.value = 1;
+                couponCodeInput.value = '';
+                couponDiscount = 0;
+                couponDiscountRow.classList.add('hidden');
+                calculateTotal();
+                checkFormValidity();
+            } catch (error) {
+                console.error("অর্ডার যোগ করতে ব্যর্থ হয়েছে:", error);
             }
-            
-            // Google Sign-In
-            function googleSignIn() {
-                const provider = new firebase.auth.GoogleAuthProvider();
-                auth.signInWithPopup(provider)
-                    .then((result) => {
-                        // User signed in
-                        loginModal.style.display = 'none';
-                        updateUserProfile(result.user);
-                        
-                        // Show order form and hide login prompt
-                        orderFormSection.style.display = 'block';
-                        loginPromptSection.style.display = 'none';
-                        
-                        // Load user's order history
-                        displayOrderHistory(result.user.uid);
-                    })
-                    .catch((error) => {
-                        console.error("Google sign-in error: ", error);
-                        alert("লগইনে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।");
-                    });
+        }
+        
+        // মন্তব্য সাবমিট করার ফাংশন
+        async function handleCommentSubmit(e) {
+            e.preventDefault();
+            if (!currentUser) return;
+
+            const commentText = commentTextarea.value.trim();
+            if (!commentText) return;
+
+            const newComment = {
+                userId: currentUser.uid,
+                userName: currentUser.displayName,
+                userPhotoURL: currentUser.photoURL,
+                text: commentText,
+                timestamp: serverTimestamp(),
+                status: 'Pending',
+                adminReply: ''
+            };
+
+            try {
+                await addDoc(collection(db, "comments"), newComment);
+                commentTextarea.value = '';
+                // Since `alert()` is not allowed, using a custom modal or message display
+                alert("আপনার মন্তব্য সফলভাবে জমা হয়েছে। এডমিন অ্যাপ্রুভ করলে তা দেখানো হবে।");
+            } catch (error) {
+                console.error("Error submitting comment:", error);
             }
+        }
 
-            // Sign out
-            function signOut() {
-                auth.signOut().then(() => {
-                    // Hide user profile and show login button
-                    userProfile.style.display = 'none';
-                    loginBtn.style.display = 'inline-block';
-                    
-                    // Hide order form and show login prompt
-                    orderFormSection.style.display = 'none';
-                    loginPromptSection.style.display = 'block';
-                    
-                    // Clear order history
-                    historyContainer.innerHTML = '';
-                    noHistoryMessage.style.display = 'block';
-                });
+        //AuthState পরিবর্তন হলে এই ফাংশনটি কল হবে
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                authUI.innerHTML = `
+                    <div class="user-profile relative group">
+                        <img src="${user.photoURL || 'https://placehold.co/40x40/e2e8f0/334155?text=🧑'}" alt="${user.displayName}" class="w-10 h-10 rounded-full border-2 border-green-500">
+                        <span class="user-name font-semibold text-gray-800 hidden md:inline-block">${user.displayName.split(' ')[0]}</span>
+                        <div class="user-menu absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg p-2 opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                            <p class="px-4 py-2 font-bold text-gray-800 border-b pb-2">স্বাগতম, ${user.displayName.split(' ')[0]}</p>
+                            <button id="signOutButton" class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors font-semibold mt-2">
+                                <i class="fas fa-sign-out-alt mr-2"></i> লগআউট
+                            </button>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('signOutButton').addEventListener('click', handleSignOut);
+
+                loginPrompt.textContent = "আপনার অর্ডারের ইতিহাস দেখতে নিচে স্ক্রল করুন।";
+                loginPrompt.className = 'text-lg text-green-500 mt-2 font-semibold flex items-center justify-center';
+                
+                requiredFields.forEach(field => field.disabled = false);
+                commentFormContainer.classList.remove('hidden');
+                checkFormValidity();
+                displayOrderHistory(user.uid);
+            } else {
+                currentUser = null;
+                authUI.innerHTML = `
+                    <button id="googleSignInButton" class="btn-google-login text-white py-2 px-4 rounded-full font-bold flex items-center space-x-2 shadow-lg">
+                        <i class="fab fa-google"></i>
+                        <span>Google দিয়ে লগইন করুন</span>
+                    </button>
+                `;
+                document.getElementById('googleSignInButton').addEventListener('click', signInWithGoogle);
+
+                loginPrompt.innerHTML = `<i class="fas fa-exclamation-circle mr-2"></i> অর্ডার করার আগে অনুগ্রহ করে লগইন করুন।`;
+                loginPrompt.className = 'text-lg text-red-500 mt-2 font-semibold flex items-center justify-center';
+                
+                requiredFields.forEach(field => field.disabled = true);
+                submitButton.disabled = true;
+                commentFormContainer.classList.add('hidden');
+                displayOrderHistory(null);
             }
+        });
 
-            // Update user profile in UI
-            function updateUserProfile(user) {
-                if (user) {
-                    // Show user profile and hide login button
-                    userProfile.style.display = 'flex';
-                    loginBtn.style.display = 'none';
-                    
-                    // Set user info
-                    userName.textContent = user.displayName || 'ব্যবহারকারী';
-                    userAvatar.src = user.photoURL || 'https://placehold.co/40x40/e2e8f0/334155?text=?';
-                    userAvatar.alt = user.displayName || 'ব্যবহারকারী';
-                }
-            }
-
-            // Auth state change handler
-            auth.onAuthStateChanged((user) => {
-                if (user) {
-                    // User is signed in
-                    updateUserProfile(user);
-                    
-                    // Show order form and hide login prompt
-                    orderFormSection.style.display = 'block';
-                    loginPromptSection.style.display = 'none';
-                    
-                    // Load user's order history
-                    displayOrderHistory(user.uid);
-                } else {
-                    // User is signed out
-                    userProfile.style.display = 'none';
-                    loginBtn.style.display = 'inline-block';
-                    
-                    // Hide order form and show login prompt
-                    orderFormSection.style.display = 'none';
-                    loginPromptSection.style.display = 'block';
-                }
-            });
-
-            // Event listeners
+        // ইভেন্ট লিসেনার সেট করা
+        document.addEventListener('DOMContentLoaded', function() {
             orderForm.addEventListener('submit', handleFormSubmit);
             requiredFields.forEach(field => field.addEventListener('input', checkFormValidity));
-
             closeModal.addEventListener('click', () => confirmationModal.style.display = 'none');
             printButton.addEventListener('click', () => window.print());
-            newOrderButton.addEventListener('click', () => {
-                confirmationModal.style.display = 'none';
-                window.location.href = '#orderFormSection';
-            });
-
-            loginBtn.addEventListener('click', () => loginModal.style.display = 'flex');
-            closeLoginModal.addEventListener('click', () => loginModal.style.display = 'none');
-            googleLoginBtn.addEventListener('click', googleSignIn);
-            loginPromptBtn.addEventListener('click', () => loginModal.style.display = 'flex');
-            logoutBtn.addEventListener('click', signOut);
-            orderNowBtn.addEventListener('click', () => {
-                if (auth.currentUser) {
-                    window.location.href = '#orderFormSection';
-                } else {
-                    loginModal.style.display = 'flex';
+            commentForm.addEventListener('submit', handleCommentSubmit);
+            applyCouponBtn.addEventListener('click', applyCoupon);
+            
+            decrementBtn.addEventListener('click', () => {
+                let currentQty = parseInt(quantityInput.value);
+                if (currentQty > 1) {
+                    quantityInput.value = currentQty - 1;
+                    calculateTotal();
                 }
             });
+            incrementBtn.addEventListener('click', () => {
+                let currentQty = parseInt(quantityInput.value);
+                if (currentQty < 10) {
+                    quantityInput.value = currentQty + 1;
+                    calculateTotal();
+                }
+            });
+            
+            // Initial load
+            calculateTotal();
+            displayComments();
 
-            // Initial Load
-            checkFormValidity();
-
-            // Intersection Observer for animations
             const animatedSections = document.querySelectorAll('.animated-section');
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
@@ -659,6 +757,5 @@
             animatedSections.forEach(section => observer.observe(section));
         });
     </script>
-
 </body>
-                           </html>
+                        </html>
